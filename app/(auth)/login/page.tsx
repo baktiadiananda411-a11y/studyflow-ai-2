@@ -1,0 +1,59 @@
+"use client";
+
+import { useAuth } from "@/context/AuthContext";
+import { useRouter } from "next/navigation";
+import { useEffect } from "react";
+import { BrainCircuit, Globe } from "lucide-react";
+import { motion } from "framer-motion";
+
+export default function LoginPage() {
+  const { user, loginWithGoogle } = useAuth();
+  const router = useRouter();
+
+  // Jika user sudah terdeteksi login, otomatis lempar ke halaman dashboard
+  useEffect(() => {
+    if (user) {
+      router.push("/dashboard");
+    }
+  }, [user, router]);
+
+  return (
+    <div className="min-h-screen flex items-center justify-center bg-slate-950 p-6 relative overflow-hidden">
+      
+      {/* Efek Cahaya Neon di Background */}
+      <div className="absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-indigo-600/20 rounded-full blur-[120px] pointer-events-none"></div>
+      <div className="absolute bottom-1/4 left-1/3 w-72 h-72 bg-purple-600/10 rounded-full blur-[100px] pointer-events-none"></div>
+
+      {/* Kartu Login Glassmorphism */}
+      <motion.div 
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.4 }}
+        className="w-full max-w-md bg-slate-900/40 backdrop-blur-xl border border-slate-800/80 p-8 rounded-3xl shadow-2xl text-center z-10"
+      >
+        <div className="flex justify-center mb-6">
+          <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center shadow-lg shadow-indigo-500/30">
+            <BrainCircuit className="w-6 h-6 text-white" />
+          </div>
+        </div>
+
+        <h2 className="text-2xl font-bold text-white mb-2">Selamat Datang di StudyFlow</h2>
+        <p className="text-slate-400 text-sm mb-8">Masuk untuk mengakses semua fitur AI belajarmu.</p>
+
+        {/* Tombol Login Google */}
+        <button
+          onClick={loginWithGoogle}
+          className="w-full flex items-center justify-center gap-3 px-5 py-3.5 rounded-xl bg-white hover:bg-slate-100 text-slate-900 font-semibold shadow-md transition-all transform active:scale-[0.98]"
+        >
+          <Globe className="w-5 h-5 text-red-500 fill-red-500" />
+          <span>Masuk dengan Google</span>
+        </button>
+
+        <div className="mt-8 pt-6 border-t border-slate-800/60 text-xs text-slate-500">
+          Dengan masuk, kamu menyetujui Ketentuan Layanan dan Kebijakan Privasi StudyFlow AI.
+        </div>
+      </motion.div>
+
+    </div>
+  );
+}
