@@ -1,10 +1,12 @@
 "use client";
 
-import Sidebar from "@/components/layout/Sidebar";
+import ResponsiveSidebar from "@/components/layout/ResponsiveSidebar";
+import MobileHeader from "@/components/layout/MobileHeader";
 import { useAuth } from "@/context/AuthContext";
 import { useRouter } from "next/navigation";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { BrainCircuit } from "lucide-react";
+import { useDeviceType } from "@/hooks/useDeviceType";
 
 export default function DashboardLayout({
   children,
@@ -13,6 +15,8 @@ export default function DashboardLayout({
 }) {
   const { user, loading } = useAuth();
   const router = useRouter();
+  const { isMobile, isMounted } = useDeviceType();
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   // Efek penjaga pintu: kalau tidak ada user dan tidak sedang loading, tendang ke login!
   useEffect(() => {
@@ -21,8 +25,15 @@ export default function DashboardLayout({
     }
   }, [user, loading, router]);
 
+  // Tutup menu ketika screen resize ke desktop
+  useEffect(() => {
+    if (!isMobile && isMenuOpen) {
+      setIsMenuOpen(false);
+    }
+  }, [isMobile, isMenuOpen]);
+
   // Tampilan layar loading sederhana saat mengecek status
-  if (loading) {
+  if (loading || !isMounted) {
     return (
       <div className="min-h-screen bg-slate-950 flex flex-col items-center justify-center gap-4">
         <BrainCircuit className="w-10 h-10 text-indigo-500 animate-pulse" />
@@ -35,10 +46,18 @@ export default function DashboardLayout({
   if (!user) return null;
 
   return (
-    <div className="min-h-screen bg-slate-950 text-slate-50 flex">
-      <Sidebar />
-        <main className="flex-1 p-8 overflow-y-auto min-h-screen">
-        {children}
+    <div className="min-h-screen bg-slate-950 text-slate-50 flex flex-col md:flex-row">
+      {/* Mobile Header */}
+      <MobileHeader onMenuClick={() => setIsMenuOpen(!isMenuOpen)} isMenuOpen={isMenuOpen} />
+
+      {/* Sidebar */}
+      <ResponsiveSidebar isOpen={isMenuOpen} onClose={() => setIsMenuOpen(false)} />
+
+      {/* Main Content */}
+      <main className="flex-1 overflow-y-auto">
+        <div className="p-4 md:p-6 lg:p-8 min-h-screen">
+          {children}
+        </div>
       </main>
     </div>
   );
