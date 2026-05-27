@@ -3,10 +3,6 @@ import {
   Layers, 
   Lightbulb, 
   Calendar, 
-  Mic, 
-  Send, 
-  Search, 
-  Image as ImageIcon, 
   Sparkles, 
   Plus, 
   MoreHorizontal 
@@ -16,7 +12,7 @@ export default function DashboardPage() {
   return (
     <div className="min-h-screen w-full bg-transparent px-6 py-8 md:px-10 md:py-12 lg:px-16 lg:py-14 flex flex-col relative overflow-hidden">
       
-      {/* DEKORASI BACKGROUND (Cahaya tipis - dirapikan agar tidak bikin layar melar) */}
+      {/* DEKORASI BACKGROUND */}
       <div className="absolute -top-20 -right-20 w-[400px] h-[400px] bg-blue-500/10 blur-[100px] rounded-full pointer-events-none"></div>
       <div className="absolute bottom-10 -left-20 w-[300px] h-[300px] bg-indigo-500/10 blur-[100px] rounded-full pointer-events-none"></div>
 
@@ -45,10 +41,10 @@ export default function DashboardPage() {
           </span>
         </h1>
 
-        {/* Robot Bubble - Dirapikan posisinya */}
+        {/* Robot Bubble */}
         <div className="absolute -top-6 right-0 lg:-right-24 hidden md:flex flex-col items-center">
           <div className="bg-slate-800 shadow-xl border border-slate-700/50 rounded-2xl px-5 py-3 mb-2.5 text-xs font-semibold text-slate-200 relative">
-            Hei Bakti! 👋 <br /> Butuh bantuan belajar?
+            Hei Bakti! 👋 <br /> Semangat belajarnya!
             <div className="absolute -bottom-1.5 left-1/2 -translate-x-1/2 w-3 h-3 bg-slate-800 border-r border-b border-slate-700/50 rotate-45"></div>
           </div>
           <div className="w-14 h-14 bg-slate-800/80 rounded-full flex items-center justify-center text-2xl shadow-inner border border-slate-700/50">
@@ -57,8 +53,8 @@ export default function DashboardPage() {
         </div>
       </div>
 
-      {/* 3. GRID MATA PELAJARAN (Jarak dan Padding Dirapikan) */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 lg:gap-8 mb-12 relative z-10">
+      {/* 3. GRID MATA PELAJARAN */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 lg:gap-8 pb-12 relative z-10">
         
         {/* KARTU 1 */}
         <div className="bg-slate-900/40 p-7 lg:p-9 rounded-[2rem] border border-slate-800/60 hover:bg-slate-800/50 transition-all flex flex-col">
@@ -126,47 +122,6 @@ export default function DashboardPage() {
           </div>
         </div>
 
-      </div>
-
-      {/* 4. AI PROMPT INPUT AREA (Dirapikan letaknya agar presisi di tengah) */}
-      <div className="mt-auto w-full max-w-3xl mx-auto relative z-10 pt-8">
-        <div className="bg-[#151515]/80 backdrop-blur-md shadow-2xl rounded-[1.75rem] p-2.5 border border-slate-800/80">
-          
-          <div className="flex items-center gap-2 px-4 py-2.5 border-b border-slate-800/50 mb-2">
-            <Sparkles className="w-3.5 h-3.5 text-blue-400" />
-            <span className="text-[10px] font-bold text-slate-400 tracking-widest uppercase">
-              StudyFlow AI Ready
-            </span>
-          </div>
-
-          <div className="flex items-center gap-3 bg-slate-900/50 rounded-2xl p-2 pl-5 pr-2">
-            <span className="text-slate-500 text-lg font-light">+</span>
-            <input 
-              type="text" 
-              placeholder='Contoh: "Ringkaskan materi ini..."'
-              className="flex-1 bg-transparent outline-none text-sm text-slate-200 placeholder-slate-500"
-              readOnly
-            />
-            <div className="flex items-center gap-1">
-              <button className="p-2.5 text-slate-400 hover:text-slate-200 transition-colors">
-                <Mic className="w-4 h-4" />
-              </button>
-              <button className="bg-white text-slate-900 p-2.5 rounded-xl hover:bg-slate-200 transition-colors">
-                <Send className="w-4 h-4" />
-              </button>
-            </div>
-          </div>
-
-          <div className="flex flex-wrap items-center gap-2 mt-3 px-3 pb-2">
-            <button className="flex items-center gap-1.5 px-3 py-1.5 bg-slate-800/40 rounded-lg text-xs font-medium text-slate-400 hover:text-slate-200 hover:bg-slate-800 transition-all">
-              <Search className="w-3 h-3" /> Deep Research
-            </button>
-            <button className="flex items-center gap-1.5 px-3 py-1.5 bg-slate-800/40 rounded-lg text-xs font-medium text-slate-400 hover:text-slate-200 hover:bg-slate-800 transition-all">
-              <ImageIcon className="w-3 h-3" /> Make an Image
-            </button>
-          </div>
-          
-        </div>
       </div>
 
     </div>
