@@ -1,4 +1,3 @@
-// components/layout/ResponsiveSidebar.tsx
 // @ts-nocheck
 "use client";
 
@@ -7,19 +6,16 @@ import { usePathname } from "next/navigation";
 import { useState, useEffect } from "react";
 
 import {
-  LayoutDashboard,
+  Home,
   MessageSquare,
-  FileText,
-  Sparkles,
   Camera,
   Terminal,
+  FileText,
+  Sparkles,
+  Settings,
+  ArrowRight,
+  ArrowLeft,
   LogOut,
-  BrainCircuit,
-  ChevronLeft,
-  ChevronRight,
-  Sun,
-  Moon,
-  X,
 } from "lucide-react";
 
 import { useAuth } from "@/context/AuthContext";
@@ -48,12 +44,10 @@ export default function ResponsiveSidebar({
     }
   }, [isOpen, isMobile]);
 
-  if (!isMounted) {
-    return null;
-  }
+  if (!isMounted) return null;
 
   const menuItems = [
-    { name: "Dashboard", href: "/dashboard", icon: LayoutDashboard },
+    { name: "Dashboard", href: "/dashboard", icon: Home },
     { name: "AI Tutor", href: "/dashboard/chat", icon: MessageSquare },
     { name: "Scanner Tugas", href: "/dashboard/scanner", icon: Camera },
     { name: "IT Debugger", href: "/dashboard/debugger", icon: Terminal },
@@ -62,60 +56,45 @@ export default function ResponsiveSidebar({
   ];
 
   const widthClass = isMobile ? "w-72" : isCollapsed ? "w-20" : "w-64";
+  
   const sidebarClasses = `
     ${isMobile ? "fixed inset-y-0 left-0" : "relative"}
+    ${isMobile && !isOpen ? "-translate-x-full" : "translate-x-0"}
     ${widthClass}
-    bg-slate-950/95 backdrop-blur-xl
+    bg-[#121212] 
     h-screen
     flex flex-col
-    shadow-2xl shadow-slate-950/40
-    transition-all duration-300 ease-in-out
+    shadow-2xl
+    transition-transform duration-300 ease-in-out
     z-50
+    border-r border-white/5
   `;
-
-  const handleMenuItemClick = () => {
-    if (isMobile && onClose) {
-      onClose();
-    }
-  };
 
   return (
     <>
-      {isMobile && shouldShow && (
+      {/* Layar Gelap Transparan di Belakang Sidebar (Hanya HP) */}
+      {isMobile && isOpen && (
         <div
-          className="fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-40"
+          className="fixed inset-0 bg-black/60 backdrop-blur-sm z-40 transition-opacity"
           onClick={onClose}
         />
       )}
 
       <aside className={sidebarClasses}>
-        {/* Tombol Silang (X) Mobile yang Bermasalah di Hapus dari Sini! */}
+        {/* TOMBOL X DI KIRI SUDAH DIMUSNAHKAN DARI SINI 🚀 */}
 
-        {!isMobile && (
-          <button
-            onClick={() => setIsCollapsed(!isCollapsed)}
-            className="absolute -right-3.5 top-8 flex h-9 w-9 items-center justify-center rounded-full bg-indigo-600 text-white shadow-lg shadow-indigo-500/30 transition-transform hover:scale-110"
-            aria-label="Perkecil sidebar"
-          >
-            {isCollapsed ? (
-              <ChevronRight className="w-4 h-4" />
-            ) : (
-              <ChevronLeft className="w-4 h-4" />
-            )}
-          </button>
-        )}
-
-        <div className="flex items-center gap-3 px-5 py-5 border-b border-slate-800/70">
-          <div className="w-11 h-11 rounded-2xl bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center shadow-lg shadow-indigo-500/20">
-            <BrainCircuit className="text-white w-6 h-6" />
+        {/* LOGO AREA */}
+        <div className="flex items-center gap-3 px-5 py-6">
+          <div className="w-9 h-9 rounded-xl bg-blue-500 flex items-center justify-center shrink-0">
+            <Sparkles className="text-white w-5 h-5" /> 
           </div>
-          <div className={`overflow-hidden transition-all duration-300 ${isCollapsed && !isMobile ? "w-0 opacity-0" : "w-full opacity-100"}`}>
-            <p className="text-sm font-semibold text-white">StudyFlow</p>
-            <p className="text-xs text-slate-400">Asisten belajar AI</p>
+          <div className={`overflow-hidden transition-all duration-300 whitespace-nowrap ${isCollapsed && !isMobile ? "w-0 opacity-0" : "w-full opacity-100"}`}>
+            <p className="text-base font-bold text-white tracking-wide">StudyFlow</p>
           </div>
         </div>
 
-        <nav className="flex-1 overflow-y-auto px-3 py-4 space-y-2">
+        {/* MAIN MENU */}
+        <nav className="flex-1 overflow-y-auto px-3 py-2 space-y-1">
           {menuItems.map((item) => {
             const isActive = pathname === item.href;
             return (
@@ -123,15 +102,15 @@ export default function ResponsiveSidebar({
                 key={item.name}
                 href={item.href}
                 title={isCollapsed && !isMobile ? item.name : undefined}
-                onClick={handleMenuItemClick}
-                className={`flex items-center gap-3 rounded-2xl transition-all duration-300 ${
+                onClick={() => isMobile && onClose && onClose()}
+                className={`flex items-center gap-3 rounded-xl transition-all duration-200 ${
                   isActive
-                    ? "bg-indigo-600/20 text-indigo-100 shadow-sm shadow-indigo-500/20"
-                    : "text-slate-300 hover:bg-slate-800 hover:text-white"
-                } ${isCollapsed && !isMobile ? "justify-center p-3" : "px-4 py-3"}`}
+                    ? "bg-[#2A2A2A] text-white" 
+                    : "text-slate-400 hover:bg-white/5 hover:text-slate-200"
+                } ${isCollapsed && !isMobile ? "justify-center p-3" : "px-3 py-2.5"}`}
               >
-                <item.icon className={`w-5 h-5 shrink-0 ${isActive ? "text-indigo-300" : "text-slate-400"}`} />
-                <span className={`text-sm font-medium transition-all duration-300 overflow-hidden ${isCollapsed && !isMobile ? "w-0 opacity-0" : "w-full opacity-100"}`}>
+                <item.icon className={`w-[22px] h-[22px] shrink-0 ${isActive ? "text-blue-400" : ""}`} strokeWidth={1.5} />
+                <span className={`text-sm font-medium transition-all duration-300 overflow-hidden whitespace-nowrap ${isCollapsed && !isMobile ? "w-0 opacity-0" : "w-full opacity-100"}`}>
                   {item.name}
                 </span>
               </Link>
@@ -139,27 +118,48 @@ export default function ResponsiveSidebar({
           })}
         </nav>
 
-        <div className="border-t border-slate-800/70 p-4 space-y-3">
+        {/* BOTTOM AREA */}
+        <div className="px-3 pb-6 space-y-1">
+          {/* Pengaturan */}
           <button
             onClick={() => document.documentElement.classList.toggle("dark")}
-            className={`flex items-center gap-3 w-full rounded-2xl px-4 py-3 text-slate-300 hover:bg-indigo-500/10 hover:text-indigo-100 transition ${isCollapsed && !isMobile ? "justify-center" : "justify-start"}`}
+            className={`flex items-center gap-3 w-full rounded-xl text-slate-400 hover:bg-white/5 hover:text-slate-200 transition-all duration-200 ${isCollapsed && !isMobile ? "justify-center p-3" : "px-3 py-2.5"}`}
+            title="Ubah Tema"
           >
-            <span className="flex h-10 w-10 items-center justify-center rounded-2xl bg-slate-900/70 text-indigo-300">
-              <Sun className="w-4 h-4 dark:hidden" />
-              <Moon className="w-4 h-4 hidden dark:block" />
+            <Settings className="w-[22px] h-[22px] shrink-0" strokeWidth={1.5} />
+            <span className={`text-sm font-medium whitespace-nowrap transition-all duration-300 overflow-hidden ${isCollapsed && !isMobile ? "w-0 opacity-0" : "w-full opacity-100"}`}>
+              Pengaturan
             </span>
-            <span className={`font-medium ${isCollapsed && !isMobile ? "sr-only" : ""}`}>Ubah Tema</span>
           </button>
 
+          {/* Logout */}
           <button
             onClick={() => logout()}
-            className={`flex items-center gap-3 w-full rounded-2xl px-4 py-3 text-slate-300 hover:bg-red-500/10 hover:text-red-200 transition ${isCollapsed && !isMobile ? "justify-center" : "justify-start"}`}
+            className={`flex items-center gap-3 w-full rounded-xl text-slate-400 hover:bg-red-500/10 hover:text-red-400 transition-all duration-200 ${isCollapsed && !isMobile ? "justify-center p-3" : "px-3 py-2.5"}`}
+            title="Keluar"
           >
-            <span className="flex h-10 w-10 items-center justify-center rounded-2xl bg-slate-900/70 text-red-400">
-              <LogOut className="w-4 h-4" />
+            <LogOut className="w-[22px] h-[22px] shrink-0" strokeWidth={1.5} />
+            <span className={`text-sm font-medium whitespace-nowrap transition-all duration-300 overflow-hidden ${isCollapsed && !isMobile ? "w-0 opacity-0" : "w-full opacity-100"}`}>
+              Keluar
             </span>
-            <span className={`font-medium ${isCollapsed && !isMobile ? "sr-only" : ""}`}>Keluar</span>
           </button>
+
+          {/* Tombol Perkecil (Collapse) */}
+          {!isMobile && (
+            <div className="pt-4 mt-2 border-t border-white/5">
+              <button
+                onClick={() => setIsCollapsed(!isCollapsed)}
+                className={`flex items-center w-full rounded-xl text-slate-500 hover:text-slate-300 transition-colors ${isCollapsed ? "justify-center" : "justify-start px-3"}`}
+                aria-label="Toggle sidebar"
+              >
+                {isCollapsed ? (
+                  <ArrowRight className="w-5 h-5" strokeWidth={1.5} />
+                ) : (
+                  <ArrowLeft className="w-5 h-5" strokeWidth={1.5} />
+                )}
+              </button>
+            </div>
+          )}
         </div>
       </aside>
     </>
