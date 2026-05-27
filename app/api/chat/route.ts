@@ -1,10 +1,10 @@
 // @ts-nocheck
-import { GoogleGenAI } from "@google/generative-ai";
+import { GoogleGenerativeAI } from "@google/generative-ai";
 import { NextResponse } from "next/server";
 
-// Memasukkan API Key langsung ke kodingan (Hati-hati saat push ke GitHub!)
+// Memasukkan API Key langsung ke kodingan
 const apiKey = "AIzaSyBxKQczqZGPTMrqcQEsQxI_HxNaV0bm-p0";
-const genAI = new GoogleGenAI({ apiKey });
+const genAI = new GoogleGenerativeAI(apiKey);
 
 export async function POST(req: Request) {
   try {
