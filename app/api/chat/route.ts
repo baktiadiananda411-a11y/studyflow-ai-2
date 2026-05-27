@@ -1,31 +1,29 @@
-import { GoogleGenerativeAI } from "@google/generative-ai";
+// @ts-nocheck
+import { GoogleGenAI } from "@google/generative-ai";
 import { NextResponse } from "next/server";
 
-// Mengambil kunci dari brankas .env.local
-const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY || "");
+// Memasukkan API Key langsung ke kodingan (Hati-hati saat push ke GitHub!)
+const apiKey = "AIzaSyBxKQczqZGPTMrqcQEsQxI_HxNaV0bm-p0";
+const genAI = new GoogleGenAI({ apiKey });
 
 export async function POST(req: Request) {
   try {
-    const body = await req.json();
-    const { message } = body;
+    const { message } = await req.json();
 
-    // Memilih model AI yang cepat
-    const model = genAI.getGenerativeModel({ model: "gemini-3-flash-preview" });
-    // Instruksi untuk AI
-    const prompt = `Kamu adalah StudyFlow AI, asisten belajar yang ramah. Jawablah pertanyaan ini dengan jelas: ${message}`;
+    const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
 
-    // Meminta jawaban
-    const result = await model.generateContent(prompt);
-    const response = await result.response;
-    const text = response.text();
+    // Instruksi sistem agar AI menjawab seperti guru universal dan memakai format LaTeX untuk rumus
+    const promptSystem = `Kamu adalah AI Tutor universal yang cerdas untuk aplikasi StudyFlow. 
+Jawablah pertanyaan user dengan jelas, santai, dan akurat dalam bahasa Indonesia. 
+Jika jawaban mengandung rumus matematika, fisika, kalkulus, atau angka kompleks, kamu WAJIB menggunakan format LaTeX dengan tanda tunggal $ untuk rumus inline atau tanda ganda $$ di baris baru untuk rumus blok.
+Pertanyaan user: ${message}`;
 
-    return NextResponse.json({ reply: text });
-    
+    const result = await model.generateContent(promptSystem);
+    const responseText = result.response.text();
+
+    return NextResponse.json({ text: responseText });
   } catch (error) {
-    console.error("Gemini API Error:", error);
-    return NextResponse.json(
-      { error: "Aduh, otak AI-nya lagi pusing. Coba tanya lagi ya!" },
-      { status: 500 }
-    );
+    console.error(error);
+    return NextResponse.json({ error: "Gagal mengambil jawaban dari AI" }, { status: 500 });
   }
 }
