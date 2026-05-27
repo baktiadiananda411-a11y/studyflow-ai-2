@@ -1,6 +1,10 @@
 // @ts-nocheck
 "use client";
 
+import { useState, useEffect } from "react";
+// Pastikan jalur ini benar mengarah ke file config.ts milikmu
+import { auth } from "@/lib/firebase/config"; 
+import { onAuthStateChanged } from "firebase/auth";
 import { 
   Layers, 
   Lightbulb, 
@@ -11,6 +15,26 @@ import {
 } from "lucide-react";
 
 export default function DashboardPage() {
+  // State untuk menyimpan nama pengguna, default "Pelajar" jika belum login
+  const [userName, setUserName] = useState("Pelajar");
+
+  // Mendeteksi perubahan status login dari Firebase
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
+      if (user && user.displayName) {
+        // Memecah nama berdasarkan spasi dan mengambil kata pertama saja
+        const firstName = user.displayName.split(" ")[0]; 
+        setUserName(firstName);
+      } else {
+        // Reset jika tidak ada user yang terdeteksi
+        setUserName("Pelajar");
+      }
+    });
+
+    // Cleanup function
+    return () => unsubscribe();
+  }, []);
+
   return (
     <div className="min-h-screen w-full bg-slate-950 px-6 py-8 md:px-10 md:py-12 lg:px-16 lg:py-14 flex flex-col relative overflow-hidden">
       
@@ -37,7 +61,8 @@ export default function DashboardPage() {
       {/* HERO GREETING AREA */}
       <div className="max-w-3xl mb-16 relative z-10">
         <h1 className="text-4xl md:text-6xl lg:text-7xl font-semibold tracking-tight text-white leading-[1.15]">
-          Halo Bakti, Siap <br />
+          {/* Teks sapaan yang dinamis menggunakan variabel {userName} */}
+          Halo {userName}, Siap <br />
           <span className="text-transparent bg-clip-text bg-gradient-to-r from-white via-slate-300 to-slate-500">
             Mencapai Target?
           </span>
