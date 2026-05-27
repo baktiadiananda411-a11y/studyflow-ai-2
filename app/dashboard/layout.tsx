@@ -4,15 +4,12 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import { Home, BookOpen, Bot, User, Menu, LogIn, LogOut } from "lucide-react";
-// Import sistem Autentikasi Firebase
 import { auth } from "@/lib/firebase/config";
 import { signInWithPopup, GoogleAuthProvider, signOut, onAuthStateChanged } from "firebase/auth";
 
 export default function DashboardLayout({ children }: { children: React.ReactNode }) {
-  // State untuk melacak apakah ada user yang sedang login
   const [user, setUser] = useState<any>(null);
 
-  // Mendeteksi status login secara real-time
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
       setUser(currentUser);
@@ -20,7 +17,6 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
     return () => unsubscribe();
   }, []);
 
-  // Fungsi untuk memunculkan Pop-up Login Google
   const handleLogin = async () => {
     const provider = new GoogleAuthProvider();
     try {
@@ -30,7 +26,6 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
     }
   };
 
-  // Fungsi untuk Logout
   const handleLogout = async () => {
     try {
       await signOut(auth);
@@ -46,13 +41,12 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
       <header className="md:hidden flex items-center justify-between p-4 border-b border-slate-800 bg-slate-950 z-20 sticky top-0">
         <h1 className="text-white font-bold text-lg">StudyFlow</h1>
         <div className="flex items-center gap-4">
-          {/* Tombol Login/Logout mini di header HP */}
           {!user ? (
-            <button onClick={handleLogin} className="text-blue-400 hover:text-blue-300">
+            <button onClick={handleLogin} className="text-slate-400 hover:text-white transition-colors">
               <LogIn className="w-5 h-5" />
             </button>
           ) : (
-            <button onClick={handleLogout} className="text-red-400 hover:text-red-300">
+            <button onClick={handleLogout} className="text-slate-400 hover:text-red-400 transition-colors">
               <LogOut className="w-5 h-5" />
             </button>
           )}
@@ -78,24 +72,24 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
           </Link>
         </nav>
 
-        {/* AREA BAWAH SIDEBAR (Profil & Login/Logout) */}
+        {/* AREA BAWAH SIDEBAR */}
         <div className="mt-auto border-t border-slate-800 pt-4 flex flex-col gap-2">
-          <Link href="/dashboard/profil" className="flex items-center gap-3 text-slate-400 hover:text-white p-3 rounded-xl transition-all">
+          <Link href="/dashboard/profil" className="flex items-center gap-3 text-slate-400 hover:text-white hover:bg-slate-800 p-3 rounded-xl transition-all">
             <User className="w-5 h-5" /> Profil
           </Link>
           
-          {/* Logika Tombol Login/Logout */}
+          {/* Tombol Login/Logout yang sudah dirapikan agar selaras dengan menu lain */}
           {!user ? (
             <button 
               onClick={handleLogin} 
-              className="flex items-center gap-3 text-slate-900 bg-white hover:bg-slate-200 p-3 rounded-xl transition-all font-bold mt-2"
+              className="flex items-center gap-3 text-slate-400 hover:text-white hover:bg-slate-800 p-3 rounded-xl transition-all w-full text-left"
             >
-              <LogIn className="w-5 h-5" /> Login Google
+              <LogIn className="w-5 h-5" /> Login
             </button>
           ) : (
             <button 
               onClick={handleLogout} 
-              className="flex items-center gap-3 text-red-400 hover:bg-red-500/10 hover:text-red-300 p-3 rounded-xl transition-all font-medium mt-2"
+              className="flex items-center gap-3 text-slate-400 hover:text-red-400 hover:bg-slate-800 p-3 rounded-xl transition-all w-full text-left"
             >
               <LogOut className="w-5 h-5" /> Logout
             </button>
