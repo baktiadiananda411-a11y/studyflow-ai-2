@@ -2,8 +2,9 @@
 "use client";
 
 import { useState } from "react";
-import ResponsiveSidebar from "@/components/ResponsiveSidebar"; 
-import MobileHeader from "@/components/MobileHeader";
+// Alamat foldernya sudah diperbaiki dengan menambahkan "/layout"
+import ResponsiveSidebar from "@/components/layout/ResponsiveSidebar"; 
+import MobileHeader from "@/components/layout/MobileHeader";
 
 export default function DashboardLayout({
   children,
