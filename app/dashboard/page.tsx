@@ -1,7 +1,7 @@
 // @ts-nocheck
 import { 
   Layers, 
-  Slack, 
+  Lightbulb, // <--- Ini sudah kuganti jadi Lightbulb
   Calendar, 
   Mic, 
   Send, 
@@ -25,7 +25,7 @@ export default function DashboardPage() {
     {
       title: "Produk Kreatif",
       desc: "Lengkapi proposal ide bisnis, buat presentasi, dan siap-siap pitching bisnis plan.",
-      icon: Slack,
+      icon: Lightbulb, // <--- Ini juga sudah kuganti
       color: "bg-blue-500/10",
       iconColor: "text-blue-500",
       footer: "Progres: 78%"
