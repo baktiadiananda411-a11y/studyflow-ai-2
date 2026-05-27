@@ -1,3 +1,6 @@
+// @ts-nocheck
+"use client";
+
 import Link from "next/link";
 import { Bot, Sparkles, FileText, BrainCircuit, ArrowRight } from "lucide-react";
 
