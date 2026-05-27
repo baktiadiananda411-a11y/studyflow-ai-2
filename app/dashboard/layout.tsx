@@ -42,7 +42,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
   return (
     <div className="min-h-screen bg-slate-950 flex flex-col md:flex-row relative">
       
-      {/* 1. HEADER KHUSUS HP (Sekarang sudah bersih, hanya sisa tombol Menu) */}
+      {/* 1. HEADER KHUSUS HP (Hanya sisa Judul dan Tombol Menu) */}
       <header className="md:hidden flex items-center justify-between p-4 border-b border-slate-800 bg-slate-950 z-30 sticky top-0">
         <h1 className="text-white font-bold text-lg">StudyFlow</h1>
         <div className="flex items-center gap-4">
@@ -63,7 +63,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
         />
       )}
 
-      {/* 2. SIDEBAR (Tempat semua menu dan tombol Login/Logout berkumpul) */}
+      {/* 2. SIDEBAR (Satu-satunya pusat navigasi sekarang) */}
       <aside 
         className={`fixed md:sticky top-0 left-0 h-screen w-64 bg-slate-900 border-r border-slate-800 p-6 z-50 flex flex-col transition-transform duration-300 ease-in-out ${
           isSidebarOpen ? "translate-x-0" : "-translate-x-full"
@@ -83,7 +83,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
           </Link>
         </nav>
 
-        {/* AREA BAWAH SIDEBAR (Login/Logout aman di sini) */}
+        {/* AREA BAWAH SIDEBAR */}
         <div className="mt-auto border-t border-slate-800 pt-4 flex flex-col gap-2">
           <Link href="/dashboard/profil" onClick={closeSidebar} className={`flex items-center gap-3 p-3 rounded-xl transition-all ${pathname === '/dashboard/profil' ? 'text-indigo-400 bg-indigo-500/10 font-medium' : 'text-slate-400 hover:text-white hover:bg-slate-800'}`}>
             <User className="w-5 h-5" /> Profil
@@ -108,29 +108,9 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
       </aside>
 
       {/* 3. AREA KONTEN UTAMA */}
-      <main className="flex-1 overflow-y-auto pb-20 md:pb-0 h-screen relative z-10">
+      <main className="flex-1 overflow-y-auto h-screen relative z-10">
         {children} 
       </main>
-
-      {/* 4. MENU BAWAH KHUSUS HP */}
-      <nav className="md:hidden fixed bottom-0 left-0 right-0 bg-slate-900/95 backdrop-blur-md border-t border-slate-800 flex justify-around items-center p-3 z-30 pb-safe">
-        <Link href="/dashboard" className={`flex flex-col items-center gap-1.5 ${pathname === '/dashboard' ? 'text-indigo-400' : 'text-slate-400 hover:text-white'}`}>
-          <Home className="w-5 h-5" />
-          <span className="text-[10px] font-medium">Home</span>
-        </Link>
-        <Link href="/dashboard/tugas" className={`flex flex-col items-center gap-1.5 ${pathname === '/dashboard/tugas' ? 'text-indigo-400' : 'text-slate-400 hover:text-white'}`}>
-          <BookOpen className="w-5 h-5" />
-          <span className="text-[10px] font-medium">Tugas</span>
-        </Link>
-        <Link href="/dashboard/chat" className={`flex flex-col items-center gap-1.5 ${pathname === '/dashboard/chat' ? 'text-indigo-400' : 'text-slate-400 hover:text-white'}`}>
-          <Bot className="w-5 h-5" />
-          <span className="text-[10px] font-medium">AI</span>
-        </Link>
-        <Link href="/dashboard/profil" className={`flex flex-col items-center gap-1.5 ${pathname === '/dashboard/profil' ? 'text-indigo-400' : 'text-slate-400 hover:text-white'}`}>
-          <User className="w-5 h-5" />
-          <span className="text-[10px] font-medium">Profil</span>
-        </Link>
-      </nav>
 
     </div>
   );
