@@ -60,15 +60,19 @@ export default function ResponsiveSidebar({
     { name: "Rangkuman", href: "/dashboard/summary", icon: Sparkles },
   ];
 
+  // Penentu lebar sidebar
   const widthClass = isMobile ? "w-72" : isCollapsed ? "w-20" : "w-64";
+  
+  // INI DIA KUNCI PERBAIKANNYA: Logika translate-x
   const sidebarClasses = `
     ${isMobile ? "fixed inset-y-0 left-0" : "relative"}
+    ${isMobile && !isOpen ? "-translate-x-full" : "translate-x-0"}
     ${widthClass}
     bg-slate-950/95 backdrop-blur-xl
     h-screen
     flex flex-col
     shadow-2xl shadow-slate-950/40
-    transition-all duration-300 ease-in-out
+    transition-transform duration-300 ease-in-out
     z-50
   `;
 
@@ -80,24 +84,27 @@ export default function ResponsiveSidebar({
 
   return (
     <>
-      {isMobile && shouldShow && (
+      {/* Layar gelap transparan di belakang sidebar (Hanya mode HP) */}
+      {isMobile && isOpen && (
         <div
-          className="fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-40"
+          className="fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-40 transition-opacity"
           onClick={onClose}
         />
       )}
 
       <aside className={sidebarClasses}>
+        {/* Tombol Silang (Hanya mode HP) */}
         {isMobile && (
           <button
             onClick={onClose}
-            className="absolute -right-10 top-4 p-2 rounded-full text-slate-300 hover:bg-slate-800 hover:text-white transition"
+            className="absolute -right-12 top-4 p-2 rounded-full bg-slate-800 text-slate-300 hover:bg-slate-700 hover:text-white transition shadow-lg"
             aria-label="Tutup sidebar"
           >
-            <X className="w-6 h-6" />
+            <X className="w-5 h-5" />
           </button>
         )}
 
+        {/* Tombol Panah Perkecil (Hanya mode Laptop) */}
         {!isMobile && (
           <button
             onClick={() => setIsCollapsed(!isCollapsed)}
@@ -113,10 +120,10 @@ export default function ResponsiveSidebar({
         )}
 
         <div className="flex items-center gap-3 px-5 py-5 border-b border-slate-800/70">
-          <div className="w-11 h-11 rounded-2xl bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center shadow-lg shadow-indigo-500/20">
+          <div className="w-11 h-11 rounded-2xl bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center shadow-lg shadow-indigo-500/20 shrink-0">
             <BrainCircuit className="text-white w-6 h-6" />
           </div>
-          <div className={`overflow-hidden transition-all duration-300 ${isCollapsed && !isMobile ? "w-0 opacity-0" : "w-full opacity-100"}`}>
+          <div className={`overflow-hidden transition-all duration-300 whitespace-nowrap ${isCollapsed && !isMobile ? "w-0 opacity-0" : "w-full opacity-100"}`}>
             <p className="text-sm font-semibold text-white">StudyFlow</p>
             <p className="text-xs text-slate-400">Asisten belajar AI</p>
           </div>
@@ -138,7 +145,7 @@ export default function ResponsiveSidebar({
                 } ${isCollapsed && !isMobile ? "justify-center p-3" : "px-4 py-3"}`}
               >
                 <item.icon className={`w-5 h-5 shrink-0 ${isActive ? "text-indigo-300" : "text-slate-400"}`} />
-                <span className={`text-sm font-medium transition-all duration-300 overflow-hidden ${isCollapsed && !isMobile ? "w-0 opacity-0" : "w-full opacity-100"}`}>
+                <span className={`text-sm font-medium transition-all duration-300 overflow-hidden whitespace-nowrap ${isCollapsed && !isMobile ? "w-0 opacity-0" : "w-full opacity-100"}`}>
                   {item.name}
                 </span>
               </Link>
@@ -151,21 +158,21 @@ export default function ResponsiveSidebar({
             onClick={() => document.documentElement.classList.toggle("dark")}
             className={`flex items-center gap-3 w-full rounded-2xl px-4 py-3 text-slate-300 hover:bg-indigo-500/10 hover:text-indigo-100 transition ${isCollapsed && !isMobile ? "justify-center" : "justify-start"}`}
           >
-            <span className="flex h-10 w-10 items-center justify-center rounded-2xl bg-slate-900/70 text-indigo-300">
+            <span className="flex h-10 w-10 items-center justify-center shrink-0 rounded-2xl bg-slate-900/70 text-indigo-300">
               <Sun className="w-4 h-4 dark:hidden" />
               <Moon className="w-4 h-4 hidden dark:block" />
             </span>
-            <span className={`font-medium ${isCollapsed && !isMobile ? "sr-only" : ""}`}>Ubah Tema</span>
+            <span className={`font-medium whitespace-nowrap transition-all duration-300 overflow-hidden ${isCollapsed && !isMobile ? "w-0 opacity-0" : "w-full opacity-100"}`}>Ubah Tema</span>
           </button>
 
           <button
             onClick={() => logout()}
             className={`flex items-center gap-3 w-full rounded-2xl px-4 py-3 text-slate-300 hover:bg-red-500/10 hover:text-red-200 transition ${isCollapsed && !isMobile ? "justify-center" : "justify-start"}`}
           >
-            <span className="flex h-10 w-10 items-center justify-center rounded-2xl bg-slate-900/70 text-red-400">
+            <span className="flex h-10 w-10 items-center justify-center shrink-0 rounded-2xl bg-slate-900/70 text-red-400">
               <LogOut className="w-4 h-4" />
             </span>
-            <span className={`font-medium ${isCollapsed && !isMobile ? "sr-only" : ""}`}>Keluar</span>
+            <span className={`font-medium whitespace-nowrap transition-all duration-300 overflow-hidden ${isCollapsed && !isMobile ? "w-0 opacity-0" : "w-full opacity-100"}`}>Keluar</span>
           </button>
         </div>
       </aside>
