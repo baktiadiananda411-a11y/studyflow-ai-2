@@ -2,20 +2,18 @@
 import { GoogleGenerativeAI } from "@google/generative-ai";
 import { NextResponse } from "next/server";
 
-// Memasukkan API Key langsung ke kodingan
-const apiKey = "AIzaSyBxKQczqZGPTMrqcQEsQxI_HxNaV0bm-p0";
+// Mengambil kunci secara aman dari Environment Variables
+const apiKey = process.env.GEMINI_API_KEY;
 const genAI = new GoogleGenerativeAI(apiKey);
 
 export async function POST(req: Request) {
   try {
     const { message } = await req.json();
-
     const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
 
-    // Instruksi sistem agar AI menjawab seperti guru universal dan memakai format LaTeX untuk rumus
     const promptSystem = `Kamu adalah AI Tutor universal yang cerdas untuk aplikasi StudyFlow. 
 Jawablah pertanyaan user dengan jelas, santai, dan akurat dalam bahasa Indonesia. 
-Jika jawaban mengandung rumus matematika, fisika, kalkulus, atau angka kompleks, kamu WAJIB menggunakan format LaTeX dengan tanda tunggal $ untuk rumus inline atau tanda ganda $$ di baris baru untuk rumus blok.
+Jika jawaban mengandung rumus, WAJIB menggunakan format LaTeX dengan tanda $ atau $$.
 Pertanyaan user: ${message}`;
 
     const result = await model.generateContent(promptSystem);
