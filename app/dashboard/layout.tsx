@@ -4,13 +4,12 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Home, BookOpen, Bot, User, Menu, LogIn, LogOut, X } from "lucide-react"; // <-- Tambah ikon X
+import { Home, BookOpen, Bot, User, Menu, LogIn, LogOut, X } from "lucide-react";
 import { auth } from "@/lib/firebase/config";
 import { signInWithPopup, GoogleAuthProvider, signOut, onAuthStateChanged } from "firebase/auth";
 
 export default function DashboardLayout({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<any>(null);
-  // State untuk menghidupkan fungsi buka-tutup Sidebar di HP/layar kecil
   const [isSidebarOpen, setIsSidebarOpen] = useState(false); 
   const pathname = usePathname();
 
@@ -38,26 +37,15 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
     }
   };
 
-  // Fungsi tutup sidebar otomatis saat menu diklik (di layar kecil)
   const closeSidebar = () => setIsSidebarOpen(false);
 
   return (
     <div className="min-h-screen bg-slate-950 flex flex-col md:flex-row relative">
       
-      {/* 1. HEADER KHUSUS HP (Tempat tombol garis tiga) */}
+      {/* 1. HEADER KHUSUS HP (Sekarang sudah bersih, hanya sisa tombol Menu) */}
       <header className="md:hidden flex items-center justify-between p-4 border-b border-slate-800 bg-slate-950 z-30 sticky top-0">
         <h1 className="text-white font-bold text-lg">StudyFlow</h1>
         <div className="flex items-center gap-4">
-          {!user ? (
-            <button onClick={handleLogin} className="text-slate-400 hover:text-white transition-colors">
-              <LogIn className="w-5 h-5" />
-            </button>
-          ) : (
-            <button onClick={handleLogout} className="text-slate-400 hover:text-red-400 transition-colors">
-              <LogOut className="w-5 h-5" />
-            </button>
-          )}
-          {/* Tombol yang sekarang sudah berfungsi membuka/menutup Sidebar */}
           <button 
             onClick={() => setIsSidebarOpen(!isSidebarOpen)} 
             className="text-slate-400 p-1 hover:text-white transition-colors"
@@ -67,15 +55,15 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
         </div>
       </header>
 
-      {/* EFEK KACA GELAP (Muncul saat Sidebar terbuka di layar kecil) */}
+      {/* EFEK KACA GELAP */}
       {isSidebarOpen && (
         <div 
           className="fixed inset-0 bg-black/60 backdrop-blur-sm z-40 md:hidden"
-          onClick={closeSidebar} // Klik di luar sidebar untuk menutup
+          onClick={closeSidebar} 
         />
       )}
 
-      {/* 2. SIDEBAR (Sekarang bisa digeser keluar-masuk) */}
+      {/* 2. SIDEBAR (Tempat semua menu dan tombol Login/Logout berkumpul) */}
       <aside 
         className={`fixed md:sticky top-0 left-0 h-screen w-64 bg-slate-900 border-r border-slate-800 p-6 z-50 flex flex-col transition-transform duration-300 ease-in-out ${
           isSidebarOpen ? "translate-x-0" : "-translate-x-full"
@@ -95,7 +83,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
           </Link>
         </nav>
 
-        {/* AREA BAWAH SIDEBAR */}
+        {/* AREA BAWAH SIDEBAR (Login/Logout aman di sini) */}
         <div className="mt-auto border-t border-slate-800 pt-4 flex flex-col gap-2">
           <Link href="/dashboard/profil" onClick={closeSidebar} className={`flex items-center gap-3 p-3 rounded-xl transition-all ${pathname === '/dashboard/profil' ? 'text-indigo-400 bg-indigo-500/10 font-medium' : 'text-slate-400 hover:text-white hover:bg-slate-800'}`}>
             <User className="w-5 h-5" /> Profil
@@ -124,9 +112,8 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
         {children} 
       </main>
 
-      {/* 4. MENU BAWAH KHUSUS HP (Tetap ada sebagai akses cepat) */}
+      {/* 4. MENU BAWAH KHUSUS HP */}
       <nav className="md:hidden fixed bottom-0 left-0 right-0 bg-slate-900/95 backdrop-blur-md border-t border-slate-800 flex justify-around items-center p-3 z-30 pb-safe">
-        {/* ... (Menu bawah tetap sama) ... */}
         <Link href="/dashboard" className={`flex flex-col items-center gap-1.5 ${pathname === '/dashboard' ? 'text-indigo-400' : 'text-slate-400 hover:text-white'}`}>
           <Home className="w-5 h-5" />
           <span className="text-[10px] font-medium">Home</span>
