@@ -1,7 +1,7 @@
 // @ts-nocheck
 import { 
   Layers, 
-  Lightbulb, // <--- Ini sudah kuganti jadi Lightbulb
+  Lightbulb, 
   Calendar, 
   Mic, 
   Send, 
@@ -13,149 +13,159 @@ import {
 } from "lucide-react";
 
 export default function DashboardPage() {
-  const subjectCards = [
-    {
-      title: "Kalkulus Lanjut",
-      desc: "Selesaikan modul integral, tonton video pembahasan, dan kerjakan kuis hari ini.",
-      icon: Layers,
-      color: "bg-orange-500/10",
-      iconColor: "text-orange-500",
-      footer: "Tenggat: Besok"
-    },
-    {
-      title: "Produk Kreatif",
-      desc: "Lengkapi proposal ide bisnis, buat presentasi, dan siap-siap pitching bisnis plan.",
-      icon: Lightbulb, // <--- Ini juga sudah kuganti
-      color: "bg-blue-500/10",
-      iconColor: "text-blue-500",
-      footer: "Progres: 78%"
-    },
-    {
-      title: "Bahasa Jawa",
-      desc: "Review ulang kosa kata krama inggil dan pelajari geguritan terbaru untuk ujian.",
-      icon: Calendar,
-      color: "bg-green-500/10",
-      iconColor: "text-green-500",
-      footer: "Status: Santai"
-    }
-  ];
-
   return (
-    // bg-transparent agar mengikuti warna gelap dari layout utama (bg-slate-950)
-    <div className="min-h-screen w-full bg-transparent p-6 md:p-10 lg:p-14 flex flex-col relative overflow-x-hidden">
+    <div className="min-h-screen w-full bg-transparent px-6 py-8 md:px-10 md:py-12 lg:px-16 lg:py-14 flex flex-col relative overflow-hidden">
       
-      {/* DECORATION GRADIENT (Pencahayaan bias halus) */}
-      <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-blue-500/10 blur-[120px] rounded-full -z-10 pointer-events-none"></div>
-      <div className="absolute bottom-0 left-0 w-[300px] h-[300px] bg-purple-500/10 blur-[100px] rounded-full -z-10 pointer-events-none"></div>
+      {/* DEKORASI BACKGROUND (Cahaya tipis - dirapikan agar tidak bikin layar melar) */}
+      <div className="absolute -top-20 -right-20 w-[400px] h-[400px] bg-blue-500/10 blur-[100px] rounded-full pointer-events-none"></div>
+      <div className="absolute bottom-10 -left-20 w-[300px] h-[300px] bg-indigo-500/10 blur-[100px] rounded-full pointer-events-none"></div>
 
-      {/* TOP NAVIGATION / HEADER */}
-      <div className="flex justify-between items-center mb-16">
-        <div className="flex items-center gap-2 text-slate-400 text-xs font-semibold tracking-widest uppercase">
+      {/* 1. HEADER AREA */}
+      <div className="flex justify-between items-center mb-14 lg:mb-20 relative z-10">
+        <div className="flex items-center gap-2.5 text-slate-400 text-xs font-bold tracking-[0.15em] uppercase">
           <Sparkles className="w-4 h-4 text-blue-400" />
           <span>StudyFlow Assistant v2.6</span>
         </div>
         
-        <div className="hidden md:flex items-center gap-8 text-sm font-medium text-slate-400">
-          <span className="hover:text-white cursor-pointer transition-colors">Daily Nivtio</span>
-          <button className="flex items-center gap-2 bg-white text-slate-950 px-5 py-2 rounded-full font-bold shadow-lg hover:scale-105 active:scale-95 transition-all">
-            <Plus className="w-4 h-4" strokeWidth={3} />
+        <div className="hidden md:flex items-center gap-6 text-sm font-medium text-slate-400">
+          <span className="cursor-pointer hover:text-slate-200 transition-colors">Daily Nivtio</span>
+          <button className="flex items-center gap-2 bg-slate-100 text-slate-900 px-5 py-2.5 rounded-full font-bold shadow-lg hover:bg-white transition-all">
+            <Plus className="w-4 h-4" strokeWidth={2.5} />
             Upgrade
           </button>
         </div>
       </div>
 
-      {/* HERO SECTION */}
-      <div className="max-w-4xl mb-16 relative">
-        <h1 className="text-5xl md:text-6xl lg:text-7xl font-medium tracking-tight text-white leading-[1.1]">
+      {/* 2. HERO GREETING AREA */}
+      <div className="max-w-3xl mb-16 relative z-10">
+        <h1 className="text-4xl md:text-6xl lg:text-7xl font-semibold tracking-tight text-white leading-[1.15]">
           Halo Bakti, Siap <br />
-          <span className="font-bold text-transparent bg-clip-text bg-gradient-to-r from-white to-slate-500">
-            Mencapai Target Besar?
+          <span className="text-transparent bg-clip-text bg-gradient-to-r from-white via-slate-300 to-slate-500">
+            Mencapai Target?
           </span>
         </h1>
 
-        {/* AI CHAT BUBBLE (Animated) */}
-        <div className="absolute -top-12 right-0 md:right-10 lg:-right-10 hidden sm:flex flex-col items-center group">
-          <div className="bg-slate-800 shadow-xl border border-slate-700 rounded-2xl px-5 py-3 mb-3 text-[13px] font-semibold text-slate-300 relative transform group-hover:-translate-y-1 transition-transform">
+        {/* Robot Bubble - Dirapikan posisinya */}
+        <div className="absolute -top-6 right-0 lg:-right-24 hidden md:flex flex-col items-center">
+          <div className="bg-slate-800 shadow-xl border border-slate-700/50 rounded-2xl px-5 py-3 mb-2.5 text-xs font-semibold text-slate-200 relative">
             Hei Bakti! 👋 <br /> Butuh bantuan belajar?
-            <div className="absolute -bottom-1.5 left-1/2 -translate-x-1/2 w-3 h-3 bg-slate-800 border-r border-b border-slate-700 rotate-45"></div>
+            <div className="absolute -bottom-1.5 left-1/2 -translate-x-1/2 w-3 h-3 bg-slate-800 border-r border-b border-slate-700/50 rotate-45"></div>
           </div>
-          <div className="w-16 h-16 bg-slate-800 rounded-full flex items-center justify-center text-3xl shadow-inner border-2 border-slate-700">
+          <div className="w-14 h-14 bg-slate-800/80 rounded-full flex items-center justify-center text-2xl shadow-inner border border-slate-700/50">
             🤖
           </div>
         </div>
       </div>
 
-      {/* SUBJECT CARDS GRID */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-auto">
-        {subjectCards.map((card, index) => (
-          <div 
-            key={index} 
-            className="group bg-slate-900/50 p-8 md:p-10 rounded-[2.5rem] border border-slate-800 hover:bg-slate-800/80 hover:border-slate-700 transition-all duration-500 flex flex-col"
-          >
-            <div className="flex justify-between items-start mb-8">
-              <div className={`w-14 h-14 ${card.color} rounded-[1.2rem] flex items-center justify-center transform group-hover:rotate-6 transition-transform duration-500`}>
-                <card.icon className={`w-7 h-7 ${card.iconColor}`} strokeWidth={1.5} />
-              </div>
-              <button className="text-slate-500 hover:text-white transition-colors">
-                <MoreHorizontal className="w-5 h-5" />
-              </button>
+      {/* 3. GRID MATA PELAJARAN (Jarak dan Padding Dirapikan) */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 lg:gap-8 mb-12 relative z-10">
+        
+        {/* KARTU 1 */}
+        <div className="bg-slate-900/40 p-7 lg:p-9 rounded-[2rem] border border-slate-800/60 hover:bg-slate-800/50 transition-all flex flex-col">
+          <div className="flex justify-between items-start mb-6">
+            <div className="w-12 h-12 bg-orange-500/10 rounded-2xl flex items-center justify-center">
+              <Layers className="w-6 h-6 text-orange-400" strokeWidth={1.5} />
             </div>
-
-            <h3 className="text-xl font-bold text-white mb-4">{card.title}</h3>
-            <p className="text-slate-400 text-[15px] leading-relaxed mb-10">
-              {card.desc}
-            </p>
-
-            <div className="mt-auto flex items-center justify-between">
-              <span className="text-[13px] font-bold text-slate-500 uppercase tracking-widest">{card.footer}</span>
-              <div className="w-8 h-8 rounded-full border-2 border-slate-700 flex items-center justify-center text-slate-400 group-hover:bg-white group-hover:text-slate-900 group-hover:border-white transition-all duration-300 cursor-pointer">
-                <Plus className="w-4 h-4" />
-              </div>
+            <button className="text-slate-500 hover:text-slate-300 transition-colors p-1">
+              <MoreHorizontal className="w-5 h-5" />
+            </button>
+          </div>
+          <h3 className="text-xl font-semibold text-slate-100 mb-3">Kalkulus Lanjut</h3>
+          <p className="text-slate-400 text-sm leading-relaxed mb-8">
+            Selesaikan modul integral, tonton video pembahasan, dan kerjakan kuis hari ini.
+          </p>
+          <div className="mt-auto flex items-center justify-between">
+            <span className="text-xs font-bold text-slate-500 uppercase tracking-wider">Tenggat: Besok</span>
+            <div className="w-8 h-8 rounded-full border border-slate-700 flex items-center justify-center text-slate-400 hover:bg-slate-700 hover:text-white transition-all cursor-pointer">
+              <Plus className="w-4 h-4" />
             </div>
           </div>
-        ))}
+        </div>
+
+        {/* KARTU 2 */}
+        <div className="bg-slate-900/40 p-7 lg:p-9 rounded-[2rem] border border-slate-800/60 hover:bg-slate-800/50 transition-all flex flex-col">
+          <div className="flex justify-between items-start mb-6">
+            <div className="w-12 h-12 bg-blue-500/10 rounded-2xl flex items-center justify-center">
+              <Lightbulb className="w-6 h-6 text-blue-400" strokeWidth={1.5} />
+            </div>
+            <button className="text-slate-500 hover:text-slate-300 transition-colors p-1">
+              <MoreHorizontal className="w-5 h-5" />
+            </button>
+          </div>
+          <h3 className="text-xl font-semibold text-slate-100 mb-3">Produk Kreatif</h3>
+          <p className="text-slate-400 text-sm leading-relaxed mb-8">
+            Lengkapi proposal ide bisnis, buat presentasi, dan siap-siap pitching.
+          </p>
+          <div className="mt-auto flex items-center justify-between">
+            <span className="text-xs font-bold text-slate-500 uppercase tracking-wider">Progres: 78%</span>
+            <div className="w-8 h-8 rounded-full border border-slate-700 flex items-center justify-center text-slate-400 hover:bg-slate-700 hover:text-white transition-all cursor-pointer">
+              <Plus className="w-4 h-4" />
+            </div>
+          </div>
+        </div>
+
+        {/* KARTU 3 */}
+        <div className="bg-slate-900/40 p-7 lg:p-9 rounded-[2rem] border border-slate-800/60 hover:bg-slate-800/50 transition-all flex flex-col">
+          <div className="flex justify-between items-start mb-6">
+            <div className="w-12 h-12 bg-green-500/10 rounded-2xl flex items-center justify-center">
+              <Calendar className="w-6 h-6 text-green-400" strokeWidth={1.5} />
+            </div>
+            <button className="text-slate-500 hover:text-slate-300 transition-colors p-1">
+              <MoreHorizontal className="w-5 h-5" />
+            </button>
+          </div>
+          <h3 className="text-xl font-semibold text-slate-100 mb-3">Bahasa Jawa</h3>
+          <p className="text-slate-400 text-sm leading-relaxed mb-8">
+            Review ulang kosa kata krama inggil dan pelajari geguritan terbaru.
+          </p>
+          <div className="mt-auto flex items-center justify-between">
+            <span className="text-xs font-bold text-slate-500 uppercase tracking-wider">Status: Santai</span>
+            <div className="w-8 h-8 rounded-full border border-slate-700 flex items-center justify-center text-slate-400 hover:bg-slate-700 hover:text-white transition-all cursor-pointer">
+              <Plus className="w-4 h-4" />
+            </div>
+          </div>
+        </div>
+
       </div>
 
-      {/* FLOATING AI PROMPT INPUT (Paling Bawah) */}
-      <div className="mt-16 w-full max-w-4xl mx-auto">
-        <div className="bg-slate-900 shadow-2xl rounded-[2rem] p-3 border border-slate-800">
+      {/* 4. AI PROMPT INPUT AREA (Dirapikan letaknya agar presisi di tengah) */}
+      <div className="mt-auto w-full max-w-3xl mx-auto relative z-10 pt-8">
+        <div className="bg-[#151515]/80 backdrop-blur-md shadow-2xl rounded-[1.75rem] p-2.5 border border-slate-800/80">
           
-          <div className="flex items-center gap-2 px-5 py-2 mb-2 border-b border-slate-800">
-            <div className="flex items-center gap-2 text-[11px] font-black text-slate-500 tracking-[0.2em] uppercase">
-              <Sparkles className="w-3 h-3 text-blue-500" />
-              Powered by StudyFlow AI
-            </div>
+          <div className="flex items-center gap-2 px-4 py-2.5 border-b border-slate-800/50 mb-2">
+            <Sparkles className="w-3.5 h-3.5 text-blue-400" />
+            <span className="text-[10px] font-bold text-slate-400 tracking-widest uppercase">
+              StudyFlow AI Ready
+            </span>
           </div>
 
-          <div className="flex items-center gap-4 bg-slate-950/50 rounded-[1.5rem] p-3 pl-6 pr-3 border border-transparent focus-within:border-slate-700 focus-within:bg-slate-950 transition-all">
-            <span className="text-slate-500 text-xl font-light">+</span>
+          <div className="flex items-center gap-3 bg-slate-900/50 rounded-2xl p-2 pl-5 pr-2">
+            <span className="text-slate-500 text-lg font-light">+</span>
             <input 
               type="text" 
-              placeholder='Contoh: "Ringkaskan konsep limit dalam kalkulus..."'
-              className="flex-1 bg-transparent outline-none text-[15px] text-slate-200 placeholder-slate-500 font-medium"
+              placeholder='Contoh: "Ringkaskan materi ini..."'
+              className="flex-1 bg-transparent outline-none text-sm text-slate-200 placeholder-slate-500"
+              readOnly
             />
-            <div className="flex items-center gap-1.5">
-              <button className="p-2.5 text-slate-400 hover:text-blue-400 hover:bg-slate-800 rounded-xl transition-all">
-                <Mic className="w-5 h-5" />
+            <div className="flex items-center gap-1">
+              <button className="p-2.5 text-slate-400 hover:text-slate-200 transition-colors">
+                <Mic className="w-4 h-4" />
               </button>
-              <button className="bg-blue-600 text-white p-3 rounded-2xl hover:shadow-lg hover:shadow-blue-500/20 hover:scale-105 active:scale-95 transition-all">
-                <Send className="w-5 h-5" />
+              <button className="bg-white text-slate-900 p-2.5 rounded-xl hover:bg-slate-200 transition-colors">
+                <Send className="w-4 h-4" />
               </button>
             </div>
           </div>
 
-          {/* QUICK ACTION CHIPS */}
-          <div className="flex flex-wrap items-center gap-3 mt-4 px-3 pb-2">
-            <button className="group flex items-center gap-2 px-4 py-2 bg-slate-800/50 rounded-xl text-[12px] font-bold text-slate-400 hover:bg-blue-500/20 hover:text-blue-400 transition-all">
-              <Search className="w-3.5 h-3.5" /> Deep Research
+          <div className="flex flex-wrap items-center gap-2 mt-3 px-3 pb-2">
+            <button className="flex items-center gap-1.5 px-3 py-1.5 bg-slate-800/40 rounded-lg text-xs font-medium text-slate-400 hover:text-slate-200 hover:bg-slate-800 transition-all">
+              <Search className="w-3 h-3" /> Deep Research
             </button>
-            <button className="group flex items-center gap-2 px-4 py-2 bg-slate-800/50 rounded-xl text-[12px] font-bold text-slate-400 hover:bg-purple-500/20 hover:text-purple-400 transition-all">
-              <ImageIcon className="w-3.5 h-3.5" /> Make an Image
-            </button>
-            <button className="group flex items-center gap-2 px-4 py-2 bg-slate-800/50 rounded-xl text-[12px] font-bold text-slate-400 hover:bg-orange-500/20 hover:text-orange-400 transition-all">
-              <Search className="w-3.5 h-3.5" /> Search
+            <button className="flex items-center gap-1.5 px-3 py-1.5 bg-slate-800/40 rounded-lg text-xs font-medium text-slate-400 hover:text-slate-200 hover:bg-slate-800 transition-all">
+              <ImageIcon className="w-3 h-3" /> Make an Image
             </button>
           </div>
+          
         </div>
       </div>
 
