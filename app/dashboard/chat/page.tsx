@@ -1,145 +1,85 @@
-"use client";
+// @ts-nocheck
+import { Sparkles, Send, Mic, Bot, User } from "lucide-react";
+// Ini dia mesin yang baru saja kita buat! Pastikan path-nya benar
+import MathRenderer from "@/components/MathRenderer"; 
 
-import { useState, useRef, useEffect } from "react";
-import { Send, Bot, User, Sparkles, Mic, MicOff } from "lucide-react";
+export default function AITutorPage() {
+  // Ini contoh jawaban AI yang penuh dengan kode matematika (menggunakan soal pisangmu tadi)
+  const contohJawabanAI = `
+Tentu! Ini adalah soal peluang kejadian saling bebas, karena pengambilan di sisir I tidak mempengaruhi sisir II.
 
-interface Message {
-  role: "user" | "ai";
-  content: string;
-}
+**1. Peluang Sisir I (ambil 2 matang dari 8 matang):**
+$$P_1 = \\frac{C(8, 2)}{C(15, 2)} = \\frac{\\frac{8 \\times 7}{2 \\times 1}}{\\frac{15 \\times 14}{2 \\times 1}} = \\frac{28}{105} = \\frac{4}{15}$$
 
-export default function ChatPage() {
-  const [messages, setMessages] = useState<Message[]>([
-    { role: "ai", content: "Halo! Aku asisten belajarmu. Ada yang ingin didiskusikan?" }
-  ]);
-  const [input, setInput] = useState("");
-  const [isLoading, setIsLoading] = useState(false);
-  const [isListening, setIsListening] = useState(false);
-  const messagesEndRef = useRef<HTMLDivElement>(null);
+**2. Peluang Sisir II (ambil 2 matang dari 4 matang):**
+$$P_2 = \\frac{C(4, 2)}{C(16, 2)} = \\frac{6}{120} = \\frac{1}{20}$$
 
-  // Fungsi Voice-to-Text
-  const toggleListening = () => {
-    const SpeechRecognition = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
-    if (!SpeechRecognition) return alert("Browser kamu tidak mendukung fitur suara.");
+**3. Peluang Total:**
+$$P = P_1 \\times P_2 = \\frac{4}{15} \\times \\frac{1}{20} = \\frac{4}{300} = \\frac{1}{75}$$
 
-    const recognition = new SpeechRecognition();
-    recognition.lang = 'id-ID';
-
-    if (isListening) {
-      recognition.stop();
-      setIsListening(false);
-    } else {
-      recognition.start();
-      setIsListening(true);
-      recognition.onresult = (event: any) => {
-        setInput(event.results[0][0].transcript);
-        setIsListening(false);
-      };
-      recognition.onend = () => setIsListening(false);
-    }
-  };
-
-  const scrollToBottom = () => {
-    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
-  };
-
-  useEffect(() => {
-    scrollToBottom();
-  }, [messages, isLoading]);
-
-  const handleSend = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!input.trim() || isLoading) return;
-
-    const userMessage = input;
-    setInput(""); 
-    setMessages((prev) => [...prev, { role: "user", content: userMessage }]);
-    setIsLoading(true);
-
-    try {
-      const res = await fetch("/api/chat", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ message: userMessage }),
-      });
-
-      const data = await res.json();
-      setMessages((prev) => [...prev, { role: "ai", content: data.reply || "Maaf, aku sedang pusing." }]);
-    } catch (error) {
-      setMessages((prev) => [...prev, { role: "ai", content: "Terjadi kesalahan koneksi." }]);
-    } finally {
-      setIsLoading(false);
-    }
-  };
+Jadi, peluang semua pisang yang terambil matang adalah **1/75**.
+  `;
 
   return (
-    <div className="w-full h-[calc(100vh-4rem)] md:h-[calc(100vh-6rem)] flex flex-col bg-slate-900 md:rounded-3xl shadow-2xl overflow-hidden">
+    <div className="min-h-screen w-full bg-transparent p-6 md:p-10 flex flex-col relative overflow-hidden">
       
-      {/* Header */}
-      <div className="bg-slate-950 p-3 md:p-6 flex items-center gap-3 md:gap-4 border-b border-slate-800">
-        <div className="w-10 md:w-12 h-10 md:h-12 bg-indigo-500/20 rounded-full flex items-center justify-center flex-shrink-0">
-          <Bot className="w-5 md:w-7 h-5 md:h-7 text-indigo-400" />
+      {/* HEADER */}
+      <div className="flex items-center gap-3 mb-8 relative z-10">
+        <div className="w-12 h-12 bg-blue-500/10 rounded-2xl flex items-center justify-center">
+          <Sparkles className="w-6 h-6 text-blue-400" />
         </div>
-        <div className="min-w-0 flex-1">
-          <h1 className="text-lg md:text-xl font-bold text-slate-100 flex items-center gap-2 line-clamp-1">
-            Tutor AI <Sparkles className="w-3 md:w-4 h-3 md:h-4 text-amber-400 flex-shrink-0" />
-          </h1>
-          <p className="text-xs md:text-sm text-slate-400">Selalu online untuk membantumu</p>
+        <div>
+          <h1 className="text-2xl font-bold text-white">AI Tutor</h1>
+          <p className="text-sm text-slate-400">Tanyakan soal matematika, fisika, atau apapun.</p>
         </div>
       </div>
 
-      {/* Area Chat */}
-      <div className="flex-1 overflow-y-auto p-3 md:p-6 space-y-4 md:space-y-6">
-        {messages.map((msg, index) => (
-          <div key={index} className={`flex items-start gap-2 md:gap-4 ${msg.role === "user" ? "flex-row-reverse" : ""}`}>
-            <div className={`w-8 md:w-10 h-8 md:h-10 rounded-full flex items-center justify-center flex-shrink-0 ${msg.role === "user" ? "bg-purple-600" : "bg-slate-800"}`}>
-              {msg.role === "user" ? <User className="w-4 md:w-5 h-4 md:h-5 text-white" /> : <Bot className="w-4 md:w-5 h-4 md:h-5 text-indigo-400" />}
-            </div>
-            <div className={`max-w-[85%] md:max-w-[75%] lg:max-w-[60%] rounded-xl md:rounded-2xl p-3 md:p-4 text-sm md:text-base ${msg.role === "user" ? "bg-indigo-600 text-white" : "bg-slate-800 text-slate-200"}`}>
-              <p className="whitespace-pre-wrap break-words">{msg.content}</p>
-            </div>
+      {/* CHAT AREA */}
+      <div className="flex-1 bg-slate-900/50 border border-slate-800/60 rounded-[2rem] p-6 mb-6 overflow-y-auto flex flex-col gap-6 relative z-10">
+        
+        {/* Bubble Chat User */}
+        <div className="flex gap-4 self-end max-w-[80%]">
+          <div className="bg-blue-600 text-white p-4 rounded-2xl rounded-tr-sm shadow-md">
+            <p className="text-sm">Tolong bantu kerjakan soal peluang pisang mentah dan matang ini beserta rumusnya ya.</p>
           </div>
-        ))}
+          <div className="w-10 h-10 bg-slate-700 rounded-full flex shrink-0 items-center justify-center">
+            <User className="w-5 h-5 text-slate-300" />
+          </div>
+        </div>
 
-        {isLoading && (
-          <div className="flex items-start gap-2 md:gap-4">
-            <div className="w-8 md:w-10 h-8 md:h-10 bg-slate-800 rounded-full flex items-center justify-center flex-shrink-0">
-              <Bot className="w-4 md:w-5 h-4 md:h-5 text-indigo-400" />
-            </div>
-            <div className="bg-slate-800 rounded-xl md:rounded-2xl p-3 md:p-5 flex gap-1.5 items-center h-10 md:h-12">
-              <div className="w-2 h-2 bg-indigo-400 rounded-full animate-bounce"></div>
-              <div className="w-2 h-2 bg-indigo-400 rounded-full animate-bounce delay-150"></div>
-              <div className="w-2 h-2 bg-indigo-400 rounded-full animate-bounce delay-300"></div>
-            </div>
+        {/* Bubble Chat AI (DI SINI MESINNYA BEKERJA!) */}
+        <div className="flex gap-4 self-start max-w-[90%]">
+          <div className="w-10 h-10 bg-slate-800 border border-slate-700 rounded-full flex shrink-0 items-center justify-center">
+            <Bot className="w-5 h-5 text-blue-400" />
           </div>
-        )}
-        <div ref={messagesEndRef} />
+          <div className="bg-slate-800 border border-slate-700/50 p-5 rounded-2xl rounded-tl-sm shadow-md">
+            {/* KITA PANGGIL KOMPONEN MATHRENDERER DI SINI */}
+            <MathRenderer content={contohJawabanAI} />
+          </div>
+        </div>
+
       </div>
 
-      {/* Form Input */}
-      <div className="p-2 md:p-4 bg-slate-950 border-t border-slate-800">
-        <form onSubmit={handleSend} className="flex gap-2 md:gap-3 max-w-7xl mx-auto">
-          <button
-            type="button"
-            onClick={toggleListening}
-            className={`p-2 md:p-3 rounded-full transition-all flex-shrink-0 ${isListening ? "bg-red-500 animate-pulse text-white" : "bg-slate-800 hover:bg-slate-700 text-slate-300"}`}
-          >
-            {isListening ? <MicOff className="w-5 md:w-6 h-5 md:h-6" /> : <Mic className="w-5 md:w-6 h-5 md:h-6" />}
-          </button>
-
-          <input
-            type="text"
-            value={input}
-            onChange={(e) => setInput(e.target.value)}
-            placeholder="Ketik atau bicara..."
-            disabled={isLoading}
-            className="flex-1 bg-slate-900 text-slate-100 rounded-full px-3 md:px-6 py-2 md:py-4 text-sm md:text-base focus:ring-2 focus:ring-indigo-500 outline-none"
+      {/* INPUT AREA */}
+      <div className="bg-[#151515]/80 backdrop-blur-md shadow-2xl rounded-[1.75rem] p-2 border border-slate-800/80 relative z-10">
+        <div className="flex items-center gap-3 bg-slate-900/50 rounded-2xl p-2 pl-5 pr-2">
+          <input 
+            type="text" 
+            placeholder='Ketik soalmu di sini...'
+            className="flex-1 bg-transparent outline-none text-sm text-slate-200 placeholder-slate-500"
+            readOnly
           />
-          <button type="submit" disabled={!input.trim()} className="w-10 h-10 md:w-14 md:h-14 bg-indigo-600 hover:bg-indigo-500 text-white rounded-full flex items-center justify-center flex-shrink-0">
-            <Send className="w-5 md:w-6 h-5 md:h-6" />
-          </button>
-        </form>
+          <div className="flex items-center gap-1">
+            <button className="p-2.5 text-slate-400 hover:text-slate-200 transition-colors">
+              <Mic className="w-4 h-4" />
+            </button>
+            <button className="bg-blue-600 text-white p-2.5 rounded-xl hover:bg-blue-500 transition-colors">
+              <Send className="w-4 h-4" />
+            </button>
+          </div>
+        </div>
       </div>
+
     </div>
   );
 }
