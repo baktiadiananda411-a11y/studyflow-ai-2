@@ -195,6 +195,7 @@ export default function ResponsiveSidebar({
             >
               Ubah Tema
             </span>
+            <span className={`font-medium ${isCollapsed && !isMobile ? "sr-only" : ""}`}>Ubah Tema</span>
           </button>
 
           <button
