@@ -1,5 +1,6 @@
 "use client";
 
+// @ts-ignore
 import { BrainCircuit, Menu, X } from "lucide-react";
 import { useState } from "react";
 
