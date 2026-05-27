@@ -9,8 +9,7 @@ const genAI = new GoogleGenerativeAI(apiKey);
 export async function POST(req: Request) {
   try {
     const { message } = await req.json();
-    const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
-
+    const model = genAI.getGenerativeModel({ model: "gemini-3-flash-preview" });
     const promptSystem = `Kamu adalah AI Tutor universal yang cerdas untuk aplikasi StudyFlow. 
 Jawablah pertanyaan user dengan jelas, santai, dan akurat dalam bahasa Indonesia. 
 Jika jawaban mengandung rumus, WAJIB menggunakan format LaTeX dengan tanda $ atau $$.
