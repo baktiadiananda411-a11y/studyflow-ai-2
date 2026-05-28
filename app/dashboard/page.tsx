@@ -2,134 +2,86 @@
 "use client";
 
 import { useState, useEffect } from "react";
-// Pastikan jalur ini benar mengarah ke file config.ts milikmu
 import { auth } from "@/lib/firebase/config"; 
 import { onAuthStateChanged } from "firebase/auth";
-import { 
-  Layers, 
-  Lightbulb, 
-  Calendar, 
-  Sparkles, 
-  Plus, 
-  MoreHorizontal 
-} from "lucide-react";
+import { Sparkles, ArrowRight } from "lucide-react";
 
 export default function DashboardPage() {
-  // State untuk menyimpan nama pengguna, default "Pelajar" jika belum login
   const [userName, setUserName] = useState("Pelajar");
+  const [chatInput, setChatInput] = useState("");
 
-  // Mendeteksi perubahan status login dari Firebase
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
       if (user && user.displayName) {
-        // Memecah nama berdasarkan spasi dan mengambil kata pertama saja
         const firstName = user.displayName.split(" ")[0]; 
         setUserName(firstName);
       } else {
-        // Reset jika tidak ada user yang terdeteksi
         setUserName("Pelajar");
       }
     });
-
-    // Cleanup function
     return () => unsubscribe();
   }, []);
 
+  const handleSendChat = (e: any) => {
+    e.preventDefault();
+    if (!chatInput.trim()) return;
+    
+    console.log("Mengirim:", chatInput);
+    alert(`Pertanyaan dikirim: ${chatInput}\n(Sistem AI sedang diintegrasikan)`);
+    setChatInput("");
+  };
+
   return (
-    <div className="min-h-screen w-full bg-slate-950 px-6 py-8 md:px-10 md:py-12 lg:px-16 lg:py-14 flex flex-col relative overflow-hidden">
+    <div className="min-h-screen w-full bg-slate-950 flex flex-col items-center justify-center p-6 relative overflow-hidden">
       
-      {/* DEKORASI BACKGROUND */}
-      <div className="absolute -top-20 -right-20 w-[400px] h-[400px] bg-blue-500/10 blur-[100px] rounded-full pointer-events-none"></div>
-      <div className="absolute bottom-10 -left-20 w-[300px] h-[300px] bg-indigo-500/10 blur-[100px] rounded-full pointer-events-none"></div>
+      {/* DEKORASI CAHAYA (Aura AI di tengah) */}
+      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[400px] bg-indigo-600/20 blur-[120px] rounded-full pointer-events-none"></div>
 
-      {/* HEADER AREA */}
-      <div className="flex justify-between items-center mb-14 lg:mb-20 relative z-10">
-        <div className="flex items-center gap-2.5 text-slate-400 text-xs font-bold tracking-[0.15em] uppercase">
-          <Sparkles className="w-4 h-4 text-blue-400" />
-          <span>StudyFlow Assistant v2.6</span>
-        </div>
+      {/* KONTEN UTAMA DI TENGAH LAYAR */}
+      <div className="w-full max-w-3xl flex flex-col items-center text-center relative z-10 -mt-20">
         
-        <div className="hidden md:flex items-center gap-6 text-sm font-medium text-slate-400">
-          <span className="cursor-pointer hover:text-slate-200 transition-colors">Daily Notification</span>
-          <button className="flex items-center gap-2 bg-slate-100 text-slate-900 px-5 py-2.5 rounded-full font-bold shadow-lg hover:bg-white transition-all">
-            <Plus className="w-4 h-4" strokeWidth={2.5} />
-            Upgrade
-          </button>
+        {/* Ikon Sparkles */}
+        <div className="w-16 h-16 bg-slate-900/80 border border-slate-800 rounded-2xl flex items-center justify-center mb-8 shadow-2xl">
+          <Sparkles className="w-8 h-8 text-indigo-400" />
         </div>
-      </div>
 
-      {/* HERO GREETING AREA */}
-      <div className="max-w-3xl mb-16 relative z-10">
-        <h1 className="text-4xl md:text-6xl lg:text-7xl font-semibold tracking-tight text-white leading-[1.15]">
-          {/* Teks sapaan yang dinamis menggunakan variabel {userName} */}
-          Halo {userName}, Siap <br />
-          <span className="text-transparent bg-clip-text bg-gradient-to-r from-white via-slate-300 to-slate-500">
-            Mencapai Target?
-          </span>
+        {/* Teks Sapaan */}
+        <h1 className="text-3xl md:text-5xl font-medium text-white mb-10 tracking-tight">
+          Halo, <span className="text-indigo-400 font-semibold">{userName}</span>.<br />
+          Apa yang ingin kamu pelajari hari ini?
         </h1>
-      </div>
 
-      {/* GRID MATA PELAJARAN */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 lg:gap-8 pb-12 relative z-10">
-        
-        {/* KARTU 1: Kalkulus */}
-        <div className="bg-slate-900/40 p-7 lg:p-9 rounded-[2rem] border border-slate-800/60 hover:bg-slate-800/50 transition-all flex flex-col">
-          <div className="flex justify-between items-start mb-6">
-            <div className="w-12 h-12 bg-orange-500/10 rounded-2xl flex items-center justify-center">
-              <Layers className="w-6 h-6 text-orange-400" strokeWidth={1.5} />
-            </div>
-            <MoreHorizontal className="w-5 h-5 text-slate-500" />
+        {/* Kotak Input Raksasa */}
+        <form onSubmit={handleSendChat} className="w-full relative group">
+          {/* Efek Glow pada Kotak Input */}
+          <div className="absolute -inset-0.5 bg-gradient-to-r from-indigo-500 to-purple-600 rounded-3xl blur opacity-30 group-hover:opacity-50 transition duration-700"></div>
+          
+          <div className="relative flex items-center bg-slate-900/90 backdrop-blur-md rounded-3xl border border-slate-700/50 p-2 shadow-2xl">
+            <input 
+              type="text" 
+              value={chatInput}
+              onChange={(e) => setChatInput(e.target.value)}
+              placeholder="Tanya soal, ringkas materi, atau minta ide tugas..." 
+              className="flex-1 bg-transparent border-none text-white px-6 py-4 outline-none text-base md:text-lg placeholder:text-slate-500"
+            />
+            <button 
+              type="submit" 
+              className={`p-4 rounded-2xl transition-all flex items-center justify-center ${chatInput.trim() ? 'bg-indigo-600 text-white hover:bg-indigo-500 hover:scale-105' : 'bg-slate-800 text-slate-500 cursor-not-allowed'}`}
+              disabled={!chatInput.trim()}
+            >
+              <ArrowRight className="w-6 h-6" />
+            </button>
           </div>
-          <h3 className="text-xl font-semibold text-slate-100 mb-3">Kalkulus Lanjut</h3>
-          <p className="text-slate-400 text-sm leading-relaxed mb-8">
-            Selesaikan modul integral dan tonton video pembahasan hari ini.
-          </p>
-          <div className="mt-auto flex items-center justify-between">
-            <span className="text-xs font-bold text-slate-500 uppercase tracking-wider">Tenggat: Besok</span>
-            <div className="w-8 h-8 rounded-full border border-slate-700 flex items-center justify-center text-slate-400 hover:bg-slate-700 transition-all cursor-pointer">
-              <Plus className="w-4 h-4" />
-            </div>
-          </div>
-        </div>
+        </form>
 
-        {/* KARTU 2: Produk Kreatif */}
-        <div className="bg-slate-900/40 p-7 lg:p-9 rounded-[2rem] border border-slate-800/60 hover:bg-slate-800/50 transition-all flex flex-col">
-          <div className="flex justify-between items-start mb-6">
-            <div className="w-12 h-12 bg-blue-500/10 rounded-2xl flex items-center justify-center">
-              <Lightbulb className="w-6 h-6 text-blue-400" strokeWidth={1.5} />
-            </div>
-            <MoreHorizontal className="w-5 h-5 text-slate-500" />
-          </div>
-          <h3 className="text-xl font-semibold text-slate-100 mb-3">Produk Kreatif</h3>
-          <p className="text-slate-400 text-sm leading-relaxed mb-8">
-            Lengkapi proposal ide bisnis dan buat presentasi pitching.
-          </p>
-          <div className="mt-auto flex items-center justify-between">
-            <span className="text-xs font-bold text-slate-500 uppercase tracking-wider">Progres: 78%</span>
-            <div className="w-8 h-8 rounded-full border border-slate-700 flex items-center justify-center text-slate-400 hover:bg-slate-700 transition-all cursor-pointer">
-              <Plus className="w-4 h-4" />
-            </div>
-          </div>
-        </div>
-
-        {/* KARTU 3: Bahasa Jawa */}
-        <div className="bg-slate-900/40 p-7 lg:p-9 rounded-[2rem] border border-slate-800/60 hover:bg-slate-800/50 transition-all flex flex-col">
-          <div className="flex justify-between items-start mb-6">
-            <div className="w-12 h-12 bg-green-500/10 rounded-2xl flex items-center justify-center">
-              <Calendar className="w-6 h-6 text-green-400" strokeWidth={1.5} />
-            </div>
-            <MoreHorizontal className="w-5 h-5 text-slate-500" />
-          </div>
-          <h3 className="text-xl font-semibold text-slate-100 mb-3">Bahasa Jawa</h3>
-          <p className="text-slate-400 text-sm leading-relaxed mb-8">
-            Review kosa kata krama inggil dan pelajari geguritan terbaru.
-          </p>
-          <div className="mt-auto flex items-center justify-between">
-            <span className="text-xs font-bold text-slate-500 uppercase tracking-wider">Status: Santai</span>
-            <div className="w-8 h-8 rounded-full border border-slate-700 flex items-center justify-center text-slate-400 hover:bg-slate-700 transition-all cursor-pointer">
-              <Plus className="w-4 h-4" />
-            </div>
-          </div>
+        {/* Saran Pertanyaan Cepat (Opsional, biar tidak terlalu kosong) */}
+        <div className="flex flex-wrap justify-center gap-3 mt-8">
+          <button onClick={() => setChatInput("Jelaskan konsep matriks dalam matematika")} className="px-4 py-2 bg-slate-900/60 border border-slate-800 rounded-full text-sm text-slate-400 hover:text-white hover:bg-slate-800 transition-colors">
+            Jelaskan konsep matriks
+          </button>
+          <button onClick={() => setChatInput("Bantu saya membuat kerangka esai sejarah")} className="px-4 py-2 bg-slate-900/60 border border-slate-800 rounded-full text-sm text-slate-400 hover:text-white hover:bg-slate-800 transition-colors">
+            Ide esai sejarah
+          </button>
         </div>
 
       </div>
