@@ -3,45 +3,80 @@
 
 import { useState } from "react";
 import { UploadCloud, Camera, FileText, ScanLine, X, Bot, Sparkles } from "lucide-react";
+import MathRenderer from "@/components/MathRenderer"; 
 
 export default function ScannerPage() {
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
+  const [imageFile, setImageFile] = useState<File | null>(null); // Menyimpan file asli
   const [isScanning, setIsScanning] = useState(false);
   const [scanResult, setScanResult] = useState<string | null>(null);
 
-  // Simulasi saat file dipilih
+  // Mengubah gambar menjadi format Base64 yang bisa dibaca API
+  const fileToBase64 = (file: File): Promise<string> => {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.readAsDataURL(file);
+      reader.onload = () => {
+        if (typeof reader.result === "string") {
+          // Membuang awalan "data:image/jpeg;base64," agar tersisa kode murninya saja
+          resolve(reader.result.split(',')[1]); 
+        }
+      };
+      reader.onerror = error => reject(error);
+    });
+  };
+
   const handleImageChange = (e: any) => {
     const file = e.target.files[0];
     if (file) {
+      setImageFile(file);
       const imageUrl = URL.createObjectURL(file);
       setSelectedImage(imageUrl);
-      setScanResult(null); // Reset hasil jika ganti foto
+      setScanResult(null); 
     }
   };
 
-  // Simulasi proses AI memindai foto
-  const handleScanStart = () => {
-    if (!selectedImage) return;
+  const handleScanStart = async () => {
+    if (!imageFile) return;
     setIsScanning(true);
+    setScanResult(null);
     
-    // Simulasi waktu loading AI (3 detik)
-    setTimeout(() => {
+    try {
+      const base64Data = await fileToBase64(imageFile);
+      
+      const response = await fetch("/api/scan", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ 
+          imageBase64: base64Data,
+          mimeType: imageFile.type 
+        }),
+      });
+
+      const data = await response.json();
+
+      if (data.text) {
+        setScanResult(data.text);
+      } else {
+        setScanResult("Gagal mendapatkan jawaban dari AI.");
+      }
+    } catch (error) {
+      console.error("Scanning error:", error);
+      setScanResult("Koneksi ke server AI terputus atau terjadi error.");
+    } finally {
       setIsScanning(false);
-      setScanResult(
-        "**Hasil Deteksi Soal:**\nHitunglah turunan pertama dari fungsi f(x) = 3x^2 + 2x - 5.\n\n**Penjelasan AI:**\nIni adalah soal kalkulus dasar. Turunan dari f(x) adalah f'(x) = 6x + 2. \nLangkah-langkahnya:\n1. Turunkan 3x^2 menjadi 6x.\n2. Turunkan 2x menjadi 2.\n3. Konstanta -5 menjadi 0."
-      );
-    }, 3000);
+    }
   };
 
   const handleClear = () => {
     setSelectedImage(null);
+    setImageFile(null);
     setScanResult(null);
   };
 
   return (
     <div className="flex flex-col h-full w-full bg-slate-950 p-6 md:p-8 overflow-y-auto">
       
-      {/* HEADER */}
       <div className="mb-8 flex items-center gap-4">
         <div className="w-14 h-14 bg-indigo-500/10 rounded-2xl flex items-center justify-center border border-indigo-500/20 shadow-lg">
           <ScanLine className="w-7 h-7 text-indigo-400" />
@@ -52,15 +87,13 @@ export default function ScannerPage() {
         </div>
       </div>
 
-      {/* GRID LAYOUT: KIRI (UPLOAD) & KANAN (HASIL) */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 h-full min-h-[500px]">
         
-        {/* KOLOM KIRI: AREA UPLOAD */}
+        {/* KOLOM KIRI: UPLOAD */}
         <div className="flex flex-col gap-4">
           <div className="bg-slate-900/60 border border-slate-800 rounded-3xl p-6 flex flex-col h-full relative overflow-hidden group">
             
             {!selectedImage ? (
-              // Tampilan saat kosong (Belum ada foto)
               <label className="flex flex-col items-center justify-center h-full min-h-[300px] border-2 border-dashed border-slate-700/50 rounded-2xl bg-slate-800/20 hover:bg-slate-800/50 hover:border-indigo-500/50 transition-all cursor-pointer">
                 <UploadCloud className="w-12 h-12 text-slate-500 mb-4 group-hover:text-indigo-400 transition-colors" />
                 <span className="text-lg font-medium text-slate-300">Klik atau Tarik Foto Kesini</span>
@@ -72,12 +105,10 @@ export default function ScannerPage() {
                 </div>
               </label>
             ) : (
-              // Tampilan saat foto sudah dipilih
               <div className="flex flex-col h-full">
                 <div className="relative flex-1 w-full rounded-2xl overflow-hidden border border-slate-700/50 bg-black/50 flex items-center justify-center">
                   <img src={selectedImage} alt="Pratinjau Tugas" className="max-h-full max-w-full object-contain" />
                   
-                  {/* Efek Garis Scanner Biru (Hanya muncul saat tombol scan ditekan) */}
                   {isScanning && (
                     <div className="absolute top-0 left-0 w-full h-1 bg-indigo-500 shadow-[0_0_15px_rgba(99,102,241,1)] animate-[scan_2s_ease-in-out_infinite]"></div>
                   )}
@@ -93,7 +124,7 @@ export default function ScannerPage() {
                     className={`flex-1 flex items-center justify-center gap-2 px-6 py-3 rounded-xl font-medium transition-all ${isScanning || scanResult ? 'bg-slate-800 text-slate-500 cursor-not-allowed' : 'bg-indigo-600 text-white hover:bg-indigo-500 shadow-lg shadow-indigo-500/20'}`}
                   >
                     {isScanning ? (
-                      <><Sparkles className="w-5 h-5 animate-pulse" /> Sedang Menganalisis...</>
+                      <><Sparkles className="w-5 h-5 animate-pulse" /> AI Sedang Menganalisis...</>
                     ) : scanResult ? (
                       "Analisis Selesai"
                     ) : (
@@ -106,7 +137,7 @@ export default function ScannerPage() {
           </div>
         </div>
 
-        {/* KOLOM KANAN: HASIL ANALISIS */}
+        {/* KOLOM KANAN: HASIL */}
         <div className="flex flex-col gap-4 h-full">
           <div className="bg-slate-900/60 border border-slate-800 rounded-3xl p-6 flex flex-col h-full">
             <h3 className="text-lg font-semibold text-white mb-4 flex items-center gap-2 border-b border-slate-800 pb-4">
@@ -122,12 +153,11 @@ export default function ScannerPage() {
               ) : isScanning ? (
                 <div className="h-full flex flex-col items-center justify-center text-indigo-400">
                   <Sparkles className="w-10 h-10 mb-4 animate-spin" />
-                  <p className="animate-pulse">Membaca tulisan pada gambar...</p>
+                  <p className="animate-pulse">Membaca dan mencari jawaban...</p>
                 </div>
               ) : scanResult ? (
-                <div className="text-slate-300 whitespace-pre-wrap leading-relaxed">
-                  {/* Nantinya MathRenderer bisa dipasang di sini untuk rumus */}
-                  {scanResult}
+                <div className="text-slate-200">
+                  <MathRenderer content={scanResult} />
                 </div>
               ) : (
                 <div className="h-full flex flex-col items-center justify-center text-slate-400">
@@ -140,7 +170,6 @@ export default function ScannerPage() {
 
       </div>
       
-      {/* Animasi kustom untuk garis scanner */}
       <style dangerouslySetInnerHTML={{__html: `
         @keyframes scan {
           0%, 100% { transform: translateY(0); }
