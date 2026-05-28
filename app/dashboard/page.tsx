@@ -5,8 +5,9 @@ import { useState, useEffect, useRef } from "react";
 import { auth } from "@/lib/firebase/config"; 
 import { onAuthStateChanged } from "firebase/auth";
 import { Sparkles, ArrowRight, Bot } from "lucide-react";
-// Pastikan import MathRenderer ini jalurnya (path) sudah sesuai dengan lokasi filemu!
-import MathRenderer from "../../../components/MathRenderer"; 
+
+// PERBAIKAN: Menggunakan alias @ agar Vercel tidak bingung mencari file
+import MathRenderer from "@/components/MathRenderer"; 
 
 export default function DashboardPage() {
   const [userName, setUserName] = useState("Pelajar");
