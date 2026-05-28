@@ -4,7 +4,8 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Home, BookOpen, Bot, User, Menu, LogIn, LogOut, X } from "lucide-react";
+// Tambahan ikon Scan, FileText, dan ClipboardList untuk menu barumu
+import { Home, BookOpen, Bot, User, Menu, LogIn, LogOut, X, Scan, FileText, ClipboardList } from "lucide-react";
 import { auth } from "@/lib/firebase/config";
 import { signInWithPopup, GoogleAuthProvider, signOut, onAuthStateChanged } from "firebase/auth";
 
@@ -42,7 +43,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
   return (
     <div className="min-h-screen bg-slate-950 flex flex-col md:flex-row relative">
       
-      {/* 1. HEADER KHUSUS HP (Hanya sisa Judul dan Tombol Menu) */}
+      {/* HEADER KHUSUS HP */}
       <header className="md:hidden flex items-center justify-between p-4 border-b border-slate-800 bg-slate-950 z-30 sticky top-0">
         <h1 className="text-white font-bold text-lg">StudyFlow</h1>
         <div className="flex items-center gap-4">
@@ -63,7 +64,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
         />
       )}
 
-      {/* 2. SIDEBAR (Satu-satunya pusat navigasi sekarang) */}
+      {/* SIDEBAR DENGAN MENU LENGKAP */}
       <aside 
         className={`fixed md:sticky top-0 left-0 h-screen w-64 bg-slate-900 border-r border-slate-800 p-6 z-50 flex flex-col transition-transform duration-300 ease-in-out ${
           isSidebarOpen ? "translate-x-0" : "-translate-x-full"
@@ -71,13 +72,29 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
       >
         <h1 className="text-white font-bold text-2xl mb-10 px-3">StudyFlow</h1>
         
-        <nav className="flex flex-col gap-2 flex-1">
+        <nav className="flex flex-col gap-2 flex-1 overflow-y-auto">
           <Link href="/dashboard" onClick={closeSidebar} className={`flex items-center gap-3 p-3 rounded-xl transition-all ${pathname === '/dashboard' ? 'text-indigo-400 bg-indigo-500/10 font-medium' : 'text-slate-300 hover:text-white hover:bg-slate-800'}`}>
             <Home className="w-5 h-5" /> Dashboard
           </Link>
+          
           <Link href="/dashboard/tugas" onClick={closeSidebar} className={`flex items-center gap-3 p-3 rounded-xl transition-all ${pathname === '/dashboard/tugas' ? 'text-indigo-400 bg-indigo-500/10 font-medium' : 'text-slate-300 hover:text-white hover:bg-slate-800'}`}>
             <BookOpen className="w-5 h-5" /> Tugas
           </Link>
+
+          {/* INI DIA MENU YANG HILANG (KEMBALI DARI PENGASINGAN) */}
+          <Link href="/dashboard/scanner" onClick={closeSidebar} className={`flex items-center gap-3 p-3 rounded-xl transition-all ${pathname === '/dashboard/scanner' ? 'text-indigo-400 bg-indigo-500/10 font-medium' : 'text-slate-300 hover:text-white hover:bg-slate-800'}`}>
+            <Scan className="w-5 h-5" /> Scanner Tugas
+          </Link>
+          
+          <Link href="/dashboard/rangkuman" onClick={closeSidebar} className={`flex items-center gap-3 p-3 rounded-xl transition-all ${pathname === '/dashboard/rangkuman' ? 'text-indigo-400 bg-indigo-500/10 font-medium' : 'text-slate-300 hover:text-white hover:bg-slate-800'}`}>
+            <FileText className="w-5 h-5" /> Rangkuman
+          </Link>
+
+          <Link href="/dashboard/catatan" onClick={closeSidebar} className={`flex items-center gap-3 p-3 rounded-xl transition-all ${pathname === '/dashboard/catatan' ? 'text-indigo-400 bg-indigo-500/10 font-medium' : 'text-slate-300 hover:text-white hover:bg-slate-800'}`}>
+            <ClipboardList className="w-5 h-5" /> Catatan
+          </Link>
+          {/* ================================================= */}
+
           <Link href="/dashboard/chat" onClick={closeSidebar} className={`flex items-center gap-3 p-3 rounded-xl transition-all ${pathname === '/dashboard/chat' ? 'text-indigo-400 bg-indigo-500/10 font-medium' : 'text-slate-300 hover:text-white hover:bg-slate-800'}`}>
             <Bot className="w-5 h-5" /> AI Tutor
           </Link>
@@ -107,7 +124,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
         </div>
       </aside>
 
-      {/* 3. AREA KONTEN UTAMA */}
+      {/* AREA KONTEN UTAMA */}
       <main className="flex-1 overflow-y-auto h-screen relative z-10">
         {children} 
       </main>
