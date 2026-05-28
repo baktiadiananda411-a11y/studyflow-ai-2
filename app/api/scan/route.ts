@@ -1,7 +1,6 @@
 import { GoogleGenerativeAI } from "@google/generative-ai";
 import { NextResponse } from "next/server";
 
-// Pastikan kamu sudah menyimpan GEMINI_API_KEY di file .env.local milikmu
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY || "");
 
 export async function POST(req: Request) {
@@ -13,8 +12,8 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: "Tidak ada gambar yang dikirim" }, { status: 400 });
     }
 
-    // Gunakan model gemini-1.5-flash karena sangat cepat untuk membaca gambar (OCR)
-    const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
+    // PERBAIKAN: Menggunakan nama model "-latest" agar tidak 404 Not Found
+    const model = genAI.getGenerativeModel({ model: "gemini-3-flash-preview" });
 
     const prompt = "Kamu adalah guru cerdas. Tolong baca teks atau soal yang ada di gambar ini, lalu berikan jawaban dan penjelasan langkah demi langkahnya secara detail dan rapi.";
 
