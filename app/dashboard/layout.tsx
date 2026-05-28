@@ -4,7 +4,6 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-// Tambahan ikon Scan, FileText, dan ClipboardList untuk menu barumu
 import { Home, BookOpen, Bot, User, Menu, LogIn, LogOut, X, Scan, FileText, ClipboardList } from "lucide-react";
 import { auth } from "@/lib/firebase/config";
 import { signInWithPopup, GoogleAuthProvider, signOut, onAuthStateChanged } from "firebase/auth";
@@ -64,7 +63,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
         />
       )}
 
-      {/* SIDEBAR DENGAN MENU LENGKAP */}
+      {/* SIDEBAR DENGAN MENU LENGKAP & ALAMAT YANG BENAR */}
       <aside 
         className={`fixed md:sticky top-0 left-0 h-screen w-64 bg-slate-900 border-r border-slate-800 p-6 z-50 flex flex-col transition-transform duration-300 ease-in-out ${
           isSidebarOpen ? "translate-x-0" : "-translate-x-full"
@@ -81,19 +80,19 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
             <BookOpen className="w-5 h-5" /> Tugas
           </Link>
 
-          {/* INI DIA MENU YANG HILANG (KEMBALI DARI PENGASINGAN) */}
           <Link href="/dashboard/scanner" onClick={closeSidebar} className={`flex items-center gap-3 p-3 rounded-xl transition-all ${pathname === '/dashboard/scanner' ? 'text-indigo-400 bg-indigo-500/10 font-medium' : 'text-slate-300 hover:text-white hover:bg-slate-800'}`}>
             <Scan className="w-5 h-5" /> Scanner Tugas
           </Link>
           
-          <Link href="/dashboard/rangkuman" onClick={closeSidebar} className={`flex items-center gap-3 p-3 rounded-xl transition-all ${pathname === '/dashboard/rangkuman' ? 'text-indigo-400 bg-indigo-500/10 font-medium' : 'text-slate-300 hover:text-white hover:bg-slate-800'}`}>
+          {/* ALAMAT DIPERBAIKI: /dashboard/summary */}
+          <Link href="/dashboard/summary" onClick={closeSidebar} className={`flex items-center gap-3 p-3 rounded-xl transition-all ${pathname === '/dashboard/summary' ? 'text-indigo-400 bg-indigo-500/10 font-medium' : 'text-slate-300 hover:text-white hover:bg-slate-800'}`}>
             <FileText className="w-5 h-5" /> Rangkuman
           </Link>
 
-          <Link href="/dashboard/catatan" onClick={closeSidebar} className={`flex items-center gap-3 p-3 rounded-xl transition-all ${pathname === '/dashboard/catatan' ? 'text-indigo-400 bg-indigo-500/10 font-medium' : 'text-slate-300 hover:text-white hover:bg-slate-800'}`}>
+          {/* ALAMAT DIPERBAIKI: /dashboard/notes */}
+          <Link href="/dashboard/notes" onClick={closeSidebar} className={`flex items-center gap-3 p-3 rounded-xl transition-all ${pathname === '/dashboard/notes' ? 'text-indigo-400 bg-indigo-500/10 font-medium' : 'text-slate-300 hover:text-white hover:bg-slate-800'}`}>
             <ClipboardList className="w-5 h-5" /> Catatan
           </Link>
-          {/* ================================================= */}
 
           <Link href="/dashboard/chat" onClick={closeSidebar} className={`flex items-center gap-3 p-3 rounded-xl transition-all ${pathname === '/dashboard/chat' ? 'text-indigo-400 bg-indigo-500/10 font-medium' : 'text-slate-300 hover:text-white hover:bg-slate-800'}`}>
             <Bot className="w-5 h-5" /> AI Tutor
