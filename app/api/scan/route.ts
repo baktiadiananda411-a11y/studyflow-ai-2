@@ -13,7 +13,7 @@ export async function POST(req: Request) {
     }
 
     // PERBAIKAN: Menggunakan nama model "-latest" agar tidak 404 Not Found
-    const model = genAI.getGenerativeModel({ model: "gemini-3-flash-preview" });
+    const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash-latest" });
 
     const prompt = "Kamu adalah guru cerdas. Tolong baca teks atau soal yang ada di gambar ini, lalu berikan jawaban dan penjelasan langkah demi langkahnya secara detail dan rapi.";
 
