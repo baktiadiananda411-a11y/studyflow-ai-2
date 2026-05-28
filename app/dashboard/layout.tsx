@@ -4,7 +4,7 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Home, BookOpen, Bot, User, Menu, LogIn, LogOut, X, Scan, FileText, ClipboardList } from "lucide-react";
+import { Home, BookOpen, User, Menu, LogIn, LogOut, X, Scan, FileText, ClipboardList } from "lucide-react";
 import { auth } from "@/lib/firebase/config";
 import { signInWithPopup, GoogleAuthProvider, signOut, onAuthStateChanged } from "firebase/auth";
 
@@ -63,7 +63,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
         />
       )}
 
-      {/* SIDEBAR DENGAN MENU LENGKAP & ALAMAT YANG BENAR */}
+      {/* SIDEBAR DENGAN MENU LENGKAP */}
       <aside 
         className={`fixed md:sticky top-0 left-0 h-screen w-64 bg-slate-900 border-r border-slate-800 p-6 z-50 flex flex-col transition-transform duration-300 ease-in-out ${
           isSidebarOpen ? "translate-x-0" : "-translate-x-full"
@@ -73,7 +73,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
         
         <nav className="flex flex-col gap-2 flex-1 overflow-y-auto">
           <Link href="/dashboard" onClick={closeSidebar} className={`flex items-center gap-3 p-3 rounded-xl transition-all ${pathname === '/dashboard' ? 'text-indigo-400 bg-indigo-500/10 font-medium' : 'text-slate-300 hover:text-white hover:bg-slate-800'}`}>
-            <Home className="w-5 h-5" /> Dashboard
+            <Home className="w-5 h-5" /> Dashboard AI
           </Link>
           
           <Link href="/dashboard/tugas" onClick={closeSidebar} className={`flex items-center gap-3 p-3 rounded-xl transition-all ${pathname === '/dashboard/tugas' ? 'text-indigo-400 bg-indigo-500/10 font-medium' : 'text-slate-300 hover:text-white hover:bg-slate-800'}`}>
@@ -84,18 +84,12 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
             <Scan className="w-5 h-5" /> Scanner Tugas
           </Link>
           
-          {/* ALAMAT DIPERBAIKI: /dashboard/summary */}
           <Link href="/dashboard/summary" onClick={closeSidebar} className={`flex items-center gap-3 p-3 rounded-xl transition-all ${pathname === '/dashboard/summary' ? 'text-indigo-400 bg-indigo-500/10 font-medium' : 'text-slate-300 hover:text-white hover:bg-slate-800'}`}>
             <FileText className="w-5 h-5" /> Rangkuman
           </Link>
 
-          {/* ALAMAT DIPERBAIKI: /dashboard/notes */}
           <Link href="/dashboard/notes" onClick={closeSidebar} className={`flex items-center gap-3 p-3 rounded-xl transition-all ${pathname === '/dashboard/notes' ? 'text-indigo-400 bg-indigo-500/10 font-medium' : 'text-slate-300 hover:text-white hover:bg-slate-800'}`}>
             <ClipboardList className="w-5 h-5" /> Catatan
-          </Link>
-
-          <Link href="/dashboard/chat" onClick={closeSidebar} className={`flex items-center gap-3 p-3 rounded-xl transition-all ${pathname === '/dashboard/chat' ? 'text-indigo-400 bg-indigo-500/10 font-medium' : 'text-slate-300 hover:text-white hover:bg-slate-800'}`}>
-            <Bot className="w-5 h-5" /> AI Tutor
           </Link>
         </nav>
 
