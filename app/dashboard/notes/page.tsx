@@ -2,59 +2,145 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Plus, Trash2, FileText, Save, Clock, ChevronRight } from "lucide-react";
+import { auth, db } from "@/lib/firebase/config"; 
+import { onAuthStateChanged } from "firebase/auth";
+import { collection, addDoc, updateDoc, deleteDoc, doc, query, where, orderBy, onSnapshot } from "firebase/firestore";
+import { Plus, Trash2, FileText, Save, Clock, ChevronRight, CloudLightning } from "lucide-react";
 
 interface Note {
   id: string;
   title: string;
   content: string;
   date: string;
+  userId: string;
 }
 
 export default function NotesPage() {
   const [notes, setNotes] = useState<Note[]>([]);
   const [activeNote, setActiveNote] = useState<Note | null>(null);
+  const [currentUser, setCurrentUser] = useState<any>(null);
+  const [isSaving, setIsSaving] = useState(false);
 
-  // Load catatan dari penyimpanan browser saat pertama kali dibuka
+  // 1. Pantau Status Login Pengguna
   useEffect(() => {
-    const savedNotes = localStorage.getItem("studyflow_notes");
-    if (savedNotes) {
-      setNotes(JSON.parse(savedNotes));
-    }
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
+      if (user) {
+        setCurrentUser(user);
+      } else {
+        setCurrentUser(null);
+        setNotes([]);
+        setActiveNote(null);
+      }
+    });
+    return () => unsubscribe();
   }, []);
 
-  // Simpan otomatis ke browser setiap ada perubahan pada 'notes'
+  // 2. Ambil Data Catatan Real-time dari Firestore (Hanya milik user yang login)
   useEffect(() => {
-    localStorage.setItem("studyflow_notes", JSON.stringify(notes));
-  }, [notes]);
+    if (!currentUser) return;
 
-  const createNewNote = () => {
-    const newNote: Note = {
-      id: Date.now().toString(),
-      title: "Catatan Baru",
-      content: "",
-      date: new Date().toLocaleDateString("id-ID", { day: 'numeric', month: 'short', year: 'numeric' }),
-    };
-    setNotes([newNote, ...notes]);
-    setActiveNote(newNote);
+    // Query: Ambil catatan milik userId ini, urutkan dari yang terbaru berdasarkan waktu pembuatan
+    const q = query(
+      collection(db, "notes"),
+      where("userId", "==", currentUser.uid),
+      orderBy("createdAt", "desc")
+    );
+
+    // onSnapshot membuat data otomatis ter-update di layar tanpa perlu refresh hlm
+    const unsubscribe = onSnapshot(q, (snapshot) => {
+      const notesData: Note[] = [];
+      snapshot.forEach((doc) => {
+        const data = doc.data();
+        notesData.push({
+          id: doc.id,
+          title: data.title,
+          content: data.content,
+          date: data.date,
+          userId: data.userId,
+        });
+      });
+      setNotes(notesData);
+      
+      // Jaga agar editor tetap sinkron jika catatan aktif di-update di tempat lain
+      if (activeNote) {
+        const currentActive = notesData.find(n => n.id === activeNote.id);
+        if (currentActive) {
+          setActiveNote(currentActive);
+        }
+      }
+    }, (error) => {
+      console.error("Gagal mengambil data dari Firestore:", error);
+    });
+
+    return () => unsubscribe();
+  }, [currentUser]);
+
+  // 3. Tambah Catatan Baru ke Firestore
+  const createNewNote = async () => {
+    if (!currentUser) return alert("Silakan login terlebih dahulu untuk membuat catatan!");
+
+    const formattedDate = new Date().toLocaleDateString("id-ID", { 
+      day: 'numeric', 
+      month: 'short', 
+      year: 'numeric' 
+    });
+
+    try {
+      const docRef = await addDoc(collection(db, "notes"), {
+        title: "Catatan Baru",
+        content: "",
+        date: formattedDate,
+        userId: currentUser.uid,
+        createdAt: new Date() // Dipakai untuk sistem sorting/pengurutan
+      });
+
+      const newNote: Note = {
+        id: docRef.id,
+        title: "Catatan Baru",
+        content: "",
+        date: formattedDate,
+        userId: currentUser.uid
+      };
+      
+      setActiveNote(newNote);
+    } catch (error) {
+      console.error("Gagal menambah catatan:", error);
+    }
   };
 
-  const updateActiveNote = (field: "title" | "content", value: string) => {
-    if (!activeNote) return;
+  // 4. Update Judul atau Isi Catatan ke Firestore
+  const updateActiveNote = async (field: "title" | "content", value: string) => {
+    if (!activeNote || !currentUser) return;
     
+    // Update local state terlebih dahulu agar ketikan terasa instan & enteng
     const updatedNote = { ...activeNote, [field]: value };
     setActiveNote(updatedNote);
-    
-    // Update juga di daftar catatan utama
-    setNotes(notes.map((note) => (note.id === activeNote.id ? updatedNote : note)));
+    setIsSaving(true);
+
+    try {
+      const noteDocRef = doc(db, "notes", activeNote.id);
+      await updateDoc(noteDocRef, {
+        [field]: value
+      });
+      setIsSaving(false);
+    } catch (error) {
+      console.error("Gagal mengupdate catatan ke database:", error);
+      setIsSaving(false);
+    }
   };
 
-  const deleteNote = (id: string, e: React.MouseEvent) => {
-    e.stopPropagation(); // Mencegah klik menyebar ke elemen induk
-    const filteredNotes = notes.filter((note) => note.id !== id);
-    setNotes(filteredNotes);
-    if (activeNote?.id === id) {
-      setActiveNote(null);
+  // 5. Hapus Catatan dari Firestore
+  const deleteNote = async (id: string, e: React.MouseEvent) => {
+    e.stopPropagation(); 
+    if (!confirm("Apakah kamu yakin ingin menghapus catatan ini?")) return;
+
+    try {
+      await deleteDoc(doc(db, "notes", id));
+      if (activeNote?.id === id) {
+        setActiveNote(null);
+      }
+    } catch (error) {
+      console.error("Gagal menghapus catatan:", error);
     }
   };
 
@@ -76,10 +162,14 @@ export default function NotesPage() {
         </div>
 
         <div className="flex-1 overflow-y-auto p-4 space-y-3">
-          {notes.length === 0 ? (
+          {!currentUser ? (
+            <div className="text-center text-slate-500 mt-10 p-2">
+              <p className="text-sm">Silakan login di menu profil atau sidebar untuk melihat catatan cloud kamu.</p>
+            </div>
+          ) : notes.length === 0 ? (
             <div className="text-center text-slate-500 mt-10">
               <FileText className="w-10 h-10 mx-auto mb-3 opacity-20" />
-              <p className="text-sm">Belum ada catatan.<br/>Buat catatan pertamamu!</p>
+              <p className="text-sm">Belum ada catatan database.<br/>Yuk buat sekarang!</p>
             </div>
           ) : (
             notes.map((note) => (
@@ -110,15 +200,18 @@ export default function NotesPage() {
         {activeNote ? (
           <div className="flex flex-col h-full">
             {/* Header Editor */}
-            <div className="flex items-center gap-4 p-4 md:p-6 border-b border-slate-800/50">
-              <button 
-                onClick={() => setActiveNote(null)}
-                className="md:hidden flex items-center text-slate-400 hover:text-white bg-slate-900 p-2 rounded-lg"
-              >
-                <ChevronRight className="w-5 h-5 rotate-180" />
-              </button>
-              <div className="flex items-center gap-2 text-sm text-slate-500">
-                <Save className="w-4 h-4" /> Tersimpan otomatis
+            <div className="flex items-center justify-between p-4 md:p-6 border-b border-slate-800/50">
+              <div className="flex items-center gap-4">
+                <button 
+                  onClick={() => setActiveNote(null)}
+                  className="md:hidden flex items-center text-slate-400 hover:text-white bg-slate-900 p-2 rounded-lg"
+                >
+                  <ChevronRight className="w-5 h-5 rotate-180" />
+                </button>
+                <div className="flex items-center gap-2 text-sm text-indigo-400 font-medium">
+                  <Save className={`w-4 h-4 ${isSaving ? 'animate-spin' : ''}`} /> 
+                  {isSaving ? "Menyimpan ke Cloud..." : "Tersimpan di Cloud"}
+                </div>
               </div>
             </div>
 
@@ -134,16 +227,16 @@ export default function NotesPage() {
               <textarea
                 value={activeNote.content}
                 onChange={(e) => updateActiveNote("content", e.target.value)}
-                placeholder="Mulai mengetik catatan pelajaranmu di sini..."
+                placeholder="Mulai menulis catatan pelajaran, rumus, atau materi penting..."
                 className="w-full h-[60vh] bg-transparent border-none outline-none text-slate-300 text-lg leading-relaxed placeholder-slate-700 resize-none"
               ></textarea>
             </div>
           </div>
         ) : (
           <div className="flex flex-col items-center justify-center h-full text-slate-500">
-            <FileText className="w-20 h-20 mb-6 opacity-10" />
-            <h2 className="text-xl font-medium text-slate-400">Pilih atau Buat Catatan Baru</h2>
-            <p className="mt-2 text-sm">Catatanmu akan tersimpan aman di perangkat ini.</p>
+            <CloudLightning className="w-20 h-20 mb-6 opacity-10 text-indigo-400" />
+            <h2 className="text-xl font-medium text-slate-400">Cloud Notes Storage</h2>
+            <p className="mt-2 text-sm text-center px-4">Pilih catatan di samping atau buat baru.<br/>Semua perubahan akan langsung disinkronisasi ke Firebase.</p>
           </div>
         )}
       </div>
