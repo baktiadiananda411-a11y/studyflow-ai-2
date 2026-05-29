@@ -1,28 +1,31 @@
+// File: app/api/summary/route.ts
 import { GoogleGenerativeAI } from "@google/generative-ai";
 import { NextResponse } from "next/server";
-
-const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY || "");
 
 export async function POST(req: Request) {
   try {
     const body = await req.json();
     const { text } = body;
+    const apiKey = process.env.GEMINI_API_KEY || "";
 
-    const model = genAI.getGenerativeModel({ model: "gemini-3-flash-preview" });
+    if (!text) {
+      return NextResponse.json({ error: "Tidak ada teks yang dikirim" }, { status: 400 });
+    }
 
-    const prompt = `Tolong buatkan rangkuman yang terstruktur, rapi, dan menggunakan poin-poin (bullet points) dari teks materi berikut agar mudah dipelajari:\n\n${text}`;
+    const genAI = new GoogleGenerativeAI(apiKey);
+    // Menggunakan model 2.5-flash yang sudah terbukti jalan di akunmu
+    const model = genAI.getGenerativeModel({ model: "gemini-2.5-flash" }); 
+
+    // Prompt khusus (perintah) agar AI merangkum dengan rapi
+    const prompt = `Tolong buatkan rangkuman yang padat, jelas, informatif, dan menggunakan format bullet points dari teks berikut ini. Buang kalimat yang bertele-tele dan ambil inti utamanya saja:\n\n${text}`;
 
     const result = await model.generateContent(prompt);
     const response = await result.response;
-    const summaryText = response.text();
+    const summary = response.text();
 
-    return NextResponse.json({ summary: summaryText });
-    
+    return NextResponse.json({ summary });
   } catch (error) {
-    console.error("Gemini Summary Error:", error);
-    return NextResponse.json(
-      { error: "Gagal merangkum teks. Coba lagi ya!" },
-      { status: 500 }
-    );
+    console.error("Error Summarizer AI:", error);
+    return NextResponse.json({ error: "Gagal memproses rangkuman." }, { status: 500 });
   }
 }

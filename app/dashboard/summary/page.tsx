@@ -10,19 +10,32 @@ export default function SummaryPage() {
   const [isLoading, setIsLoading] = useState(false);
   const [isCopied, setIsCopied] = useState(false);
 
-  // Simulasi proses merangkum (Nanti kita ganti dengan API Gemini)
-  const handleSummarize = () => {
-    if (!inputText.trim()) return;
+  // FUNGSI ASLI: Memanggil API Gemini untuk merangkum
+  const handleSummarize = async () => {
+    if (!inputText.trim() || isLoading) return;
     setIsLoading(true);
     setSummaryResult(null);
 
-    // Simulasi loading 2.5 detik
-    setTimeout(() => {
-      setSummaryResult(
-        "**Ringkasan Materi:**\n\n• Teks yang kamu masukkan sedang disimulasikan oleh sistem.\n• Nanti di sini akan muncul poin-poin penting dari artikel atau materi pelajaranmu.\n• Fitur ini akan membuang kalimat bertele-tele dan mengambil inti utamanya saja.\n\n*Catatan: Ini masih mode simulasi tampilan UI.*"
-      );
+    try {
+      const response = await fetch("/api/summary", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ text: inputText }),
+      });
+
+      const data = await response.json();
+
+      if (data.summary) {
+        setSummaryResult(data.summary);
+      } else {
+        setSummaryResult("Maaf, terjadi kesalahan saat merangkum teks.");
+      }
+    } catch (error) {
+      console.error("Error:", error);
+      setSummaryResult("Koneksi ke server AI terputus. Coba lagi.");
+    } finally {
       setIsLoading(false);
-    }, 2500);
+    }
   };
 
   const handleCopy = () => {
@@ -94,7 +107,7 @@ export default function SummaryPage() {
               <Sparkles className="w-5 h-5 text-indigo-400" /> Hasil Rangkuman
             </h3>
             
-            {/* Tombol Copy (Hanya muncul jika ada hasil) */}
+            {/* Tombol Copy */}
             {summaryResult && (
               <button
                 onClick={handleCopy}
@@ -108,7 +121,6 @@ export default function SummaryPage() {
           
           <div className="flex-1 w-full bg-slate-950/50 rounded-2xl border border-slate-800/80 p-5 overflow-y-auto">
             {isLoading ? (
-              // Animasi Loading
               <div className="h-full flex flex-col items-center justify-center text-indigo-400 space-y-4">
                 <div className="relative w-16 h-16 flex items-center justify-center">
                   <div className="absolute inset-0 border-4 border-indigo-500/20 border-t-indigo-500 rounded-full animate-spin"></div>
@@ -117,12 +129,10 @@ export default function SummaryPage() {
                 <p className="font-medium animate-pulse">Menyaring informasi penting...</p>
               </div>
             ) : summaryResult ? (
-              // Menampilkan Hasil
               <div className="text-slate-200 whitespace-pre-wrap leading-relaxed text-base">
                 {summaryResult}
               </div>
             ) : (
-              // State Awal (Kosong)
               <div className="h-full flex flex-col items-center justify-center text-slate-500 text-center">
                 <AlignLeft className="w-16 h-16 mb-4 opacity-30" />
                 <p>Hasil rangkumanmu akan muncul di sini.<br/>Tulisan panjang akan disulap jadi poin-poin padat!</p>
