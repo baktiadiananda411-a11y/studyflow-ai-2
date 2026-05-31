@@ -4,7 +4,7 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Home, BookOpen, User, Menu, LogIn, LogOut, X, Scan, FileText, ClipboardList } from "lucide-react";
+import { Home, BookOpen, User, Menu, LogIn, LogOut, X, Scan, FileText } from "lucide-react";
 import { auth } from "@/lib/firebase/config";
 import { signInWithPopup, GoogleAuthProvider, signOut, onAuthStateChanged } from "firebase/auth";
 
@@ -86,10 +86,6 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
           
           <Link href="/dashboard/summary" onClick={closeSidebar} className={`flex items-center gap-3 p-3 rounded-xl transition-all ${pathname === '/dashboard/summary' ? 'text-indigo-400 bg-indigo-500/10 font-medium' : 'text-slate-300 hover:text-white hover:bg-slate-800'}`}>
             <FileText className="w-5 h-5" /> Rangkuman
-          </Link>
-
-          <Link href="/dashboard/notes" onClick={closeSidebar} className={`flex items-center gap-3 p-3 rounded-xl transition-all ${pathname === '/dashboard/notes' ? 'text-indigo-400 bg-indigo-500/10 font-medium' : 'text-slate-300 hover:text-white hover:bg-slate-800'}`}>
-            <ClipboardList className="w-5 h-5" /> Catatan
           </Link>
         </nav>
 
